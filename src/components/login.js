@@ -22,7 +22,7 @@ const Login = () => {
 
   useEffect(() => {
     if (currentUser) {
-      navigate('/'); // Redirect to the home page if the user is already logged in
+      navigate('/'); 
     }
   }, []);
 
