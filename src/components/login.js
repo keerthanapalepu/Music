@@ -18,17 +18,18 @@ const Login = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [verificationId, setVerificationId] = useState('');
+  const [resendButtonDisabled, setResendButtonDisabled] = useState(true);
   const recaptchaVerifierRef = useRef(null);
 
   useEffect(() => {
     if (currentUser) {
-      navigate('/'); 
+      navigate('/');
     }
   }, []);
 
   const handleSendCode = () => {
     const recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
-      size: 'normal',
+      size: 'invisible',
     }, auth);
     recaptchaVerifierRef.current = recaptchaVerifier;
 
@@ -36,6 +37,8 @@ const Login = () => {
       .then((confirmationResult) => {
         setVerificationId(confirmationResult.verificationId);
         console.log('OTP sent');
+        setResendButtonDisabled(true);
+        setTimeout(() => setResendButtonDisabled(false), 20000);
       })
       .catch((error) => {
         console.error('Error sending verification code:', error);
@@ -49,6 +52,8 @@ const Login = () => {
         .then((confirmationResult) => {
           setVerificationId(confirmationResult.verificationId);
           console.log('OTP resent');
+          setResendButtonDisabled(true);
+          setTimeout(() => setResendButtonDisabled(false), 20000);
         })
         .catch((error) => {
           console.error('Error resending verification code:', error);
@@ -99,7 +104,7 @@ const Login = () => {
           <label>Phone Number:</label>
           <input type="text" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
           <button onClick={handleSendCode}>Send Code</button>
-          <button onClick={handleResendCode}>Resend Code</button>
+          <button onClick={handleResendCode} disabled={resendButtonDisabled}>Resend Code</button>
         </div>
         <div>
           <label>Verification Code:</label>
