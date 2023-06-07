@@ -5,20 +5,14 @@ import { getStorage } from "firebase/storage";
 import { getFirestore } from "@firebase/firestore";
 
 
-
-
 const firebaseConfig = {
-  apiKey: "AIzaSyBsCMYh2xXTjTMDyvhbGj6qKsFvY7lvnT0",
-  authDomain: "music-20588.firebaseapp.com",
-  databaseURL: "https://music-20588-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "music-20588",
-  storageBucket: "music-20588.appspot.com",
-  messagingSenderId: "856037638200",
-  appId: "1:856037638200:web:7b7babf93bc24a95c726cd",
-  measurementId: "G-8P1XJKZYF6"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
-
-
 
 
 const app = initializeApp(firebaseConfig);
