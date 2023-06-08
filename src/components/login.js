@@ -102,7 +102,9 @@ const Login = () => {
       const formattedErrorCode = errorCode
         .replace(/-/g, ' ') // Replacing hyphens with spaces
         .replace(/(^|\s)\S/g, (match) => match.toUpperCase()); // Capitalizing the first letter
-    
+    if(formattedErrorCode === "Invalid Phone Number"){
+      setCountdown(0)
+    }
       return formattedErrorCode;
     }
     else{
