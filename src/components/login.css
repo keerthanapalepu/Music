@@ -1,0 +1,55 @@
+.phone-input-container {
+    width: 280px;
+    height: 30px;
+    
+  }
+  h1{
+    font-family: 'Play Fair', sans-serif;
+    color: #222624;
+  }
+  .custom-phone-input {
+    width: 100%;
+    height: 100%;
+    background-color: #aeaea1;
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+    padding: 15px;
+  }
+  .custom-container input {
+    background-color: #aeaea1;
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+    outline: none;
+    border: none;
+  }
+  
+  .custom-phone-input input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    color: #333;
+    outline: none;
+  }
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 10px;
+  }
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  
+  .button-container {
+    margin-left: 10px;
+  }
+  .custom-button {
+    background-color: #406462 !important;
+    color: #ffffff !important;
+  }

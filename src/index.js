@@ -3,10 +3,31 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Font from './fonts/playfair.ttf';
+
+const customFont = {
+  fontFamily: 'Play Fair',
+  src: `url(${Font}) format('truetype')`,
+  fontWeight: 'normal',
+  fontStyle: 'normal',
+};
+
+// Apply the font using CSS
+const globalStyles = `
+  @font-face {
+    font-family: 'Play Fair';
+    src: ${customFont.src};
+    font-weight: ${customFont.fontWeight};
+    font-style: ${customFont.fontStyle};
+  }
+
+  /* Additional global styles if needed */
+`;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+  <style>{globalStyles}</style>
     <App />
   </React.StrictMode>
 );
