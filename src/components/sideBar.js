@@ -15,12 +15,12 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'transparent',
   },
   listItem: {
-    backgroundColor: '#5C0E00',
+    backgroundColor: '#0C364F',
     marginBottom: '10px',
     borderRadius: '5px',
     color: '#A7A7A7',
     '&:hover': {
-      backgroundColor: '#470000',
+      backgroundColor: '#082534',
       color: '#333333',
     },
   },

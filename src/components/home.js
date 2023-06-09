@@ -32,7 +32,7 @@ const theme = createMuiTheme({
 const useStyles = makeStyles((theme) => ({
   iconButton: {
     marginLeft: theme.spacing(1),
-    color: "#5C0E00"
+    color: "#0C364F"
   },
   root: {
     flexGrow: 1,
@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
 
 function HomePage() {
   const classes = useStyles();
-  const [activeButton, setActiveButton] = useState('');
+  const [activeButton, setActiveButton] = useState('Home');
 
   const handleButtonClick = (buttonName) => {
     setActiveButton(buttonName);
@@ -72,12 +72,12 @@ function HomePage() {
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
         <Grid container className={classes.gridContainer}>
-          <Grid item xs={2} md={2} className={classes.gridItem} style={{ backgroundColor: '#5C0E00' }}>
+          <Grid item xs={2} md={2} className={classes.gridItem} style={{ backgroundColor: '#42779A' }}>
             <Card className={classes.card}>
             <SideBar handleButtonClick={handleButtonClick} />
             </Card>
           </Grid>
-          <Grid item xs={10} md={10} className={classes.gridItem} style={{ backgroundColor: '#F49011' }}>
+          <Grid item xs={10} md={10} className={classes.gridItem} style={{ backgroundColor: '#a5a492' }}>
             <Card className={classes.card}>
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <IconButton className={classes.iconButton} onClick={() => {setActiveButton("Cart")}}>

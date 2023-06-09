@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import Font from './fonts/playfair.ttf';
 
 const customFont = {
-  fontFamily: 'Play Fair',
+  fontFamily: 'play-fair',
   src: `url(${Font}) format('truetype')`,
   fontWeight: 'normal',
   fontStyle: 'normal',
@@ -15,7 +15,7 @@ const customFont = {
 // Apply the font using CSS
 const globalStyles = `
   @font-face {
-    font-family: 'Play Fair';
+    font-family: 'play-fair';
     src: ${customFont.src};
     font-weight: ${customFont.fontWeight};
     font-style: ${customFont.fontStyle};
