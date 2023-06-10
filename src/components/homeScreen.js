@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Grid, Card, CardContent, Typography, IconButton } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
 import { db, storage } from '../services/firebase';
-import {collection, limit, orderBy, query, startAfter, getDocs} from '@firebase/firestore'
+import {collection, limit, orderBy, query, startAfter, getDocs, doc, getDoc} from '@firebase/firestore'
 import {
   getDownloadURL,
   ref,
 } from "firebase/storage";
 import {BsChevronRight, BsChevronLeft} from 'react-icons/bs'
+import SongsList from './songsList';
 
 const useStyles = makeStyles((theme) => ({
   gridItem: {
@@ -70,6 +71,7 @@ const HomeScreen = () => {
   const [weekSongsArray, setWeekSongsArray] = useState([]);
   const [lastAddedOn, setLastAddedOn] = useState(null);
   const [selectedCard, setSelectedCard] = useState(null);
+  const [allSongsArray, setAllSongsArray] = useState([]);
   const handleNext = () => {
     const nextIndex = startIndex + 4;
     setStartIndex(nextIndex >= weekSongsArray.length ? 0 : nextIndex);
@@ -130,6 +132,46 @@ const HomeScreen = () => {
     }
     fetchData();
   }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+     const songsArray =  weekSongsArray[selectedCard].songs;
+     
+     const newDocs = await Promise.all(songsArray.map(async (item) => {
+      const docRef = doc(db, 'songs', item);
+      const documentSnapshot = await getDoc(docRef);
+      if (documentSnapshot.exists()) {
+        const data = documentSnapshot.data();
+        var songUrl = "";
+          const storageRef = ref(storage, `/music/${data.week}/${documentSnapshot.id}.mp3`);
+
+          try {
+            const url = await getDownloadURL(storageRef);
+            songUrl = url;
+          } catch (error) {
+            switch (error.code) {
+              case "storage/object-not-found":
+                console.log("File doesn't exist");
+                songUrl = "";
+                break;
+              default:
+                songUrl = "";
+                break;
+            }
+          }
+        // newDocs.push({name: data.name, singer: data.artist, url: songUrl});
+        return {name: data.name, singer: data.artist, url: songUrl, duration: '3:14'};
+      }
+     }))
+     console.log(newDocs);
+     setAllSongsArray((prevDocs) => [...prevDocs, ...newDocs]);
+   }
+   if(selectedCard!= null && selectedCard >= 0){
+    setAllSongsArray([])
+    fetchData();
+    
+   }
+  }, [selectedCard])
   
   return (
     <Grid container style={{ height: '85vh' }}>
@@ -169,7 +211,7 @@ const HomeScreen = () => {
           className={classes.gridItem}
           key={index}
         >
-          <Card className={classes.card}>
+          <Card className={classes.card} onClick={() => setSelectedCard(index)}>
             <CardContent className={classes.cardContent}>
               <div>
                 <img
@@ -194,8 +236,8 @@ const HomeScreen = () => {
         </IconButton>
       </Grid>
 
-      <Grid container item style={{ height: '55%', backgroundColor: 'red', margin: '0 10px 0' }}>
-        {/* Content for the second grid */}
+      <Grid container item style={{ height: '55%', backgroundColor: '#6A695E', margin: '0 10px 0' }}>
+        {allSongsArray.length > 0 && (<SongsList songs={allSongsArray}/>)}
       </Grid>
 
       <div>
