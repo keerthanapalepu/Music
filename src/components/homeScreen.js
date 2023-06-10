@@ -69,7 +69,7 @@ const HomeScreen = () => {
   const [startIndex, setStartIndex] = useState(0);
   const [weekSongsArray, setWeekSongsArray] = useState([]);
   const [lastAddedOn, setLastAddedOn] = useState(null);
-
+  const [selectedCard, setSelectedCard] = useState(null);
   const handleNext = () => {
     const nextIndex = startIndex + 4;
     setStartIndex(nextIndex >= weekSongsArray.length ? 0 : nextIndex);

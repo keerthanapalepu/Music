@@ -19,7 +19,8 @@ import './login.css';
 import OTPInput from "otp-input-react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { collection, query, where, getDocs, setDoc, doc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../services/firebase';
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundImage: `url(${pic})`, // Replace with the actual path to the background image
@@ -172,6 +173,26 @@ const Login = () => {
     
   };
 
+  const createDoc = async (user) => {
+    const docRef = doc(db, 'users', user.uid);
+    const documentSnapshot = await getDoc(docRef);
+  
+    if (documentSnapshot.exists()) {
+      try {
+        await setDoc(docRef, { lastLoggedOn: serverTimestamp() }, { merge: true });
+        console.log('Document updated successfully!');
+      } catch (error) {
+        console.error('Error updating document:', error);
+      }
+    } else {
+      try {
+        await setDoc(docRef,{ uid : user.uid, name: user.displayName, phoneNumber: user.phoneNumber, createdOn: serverTimestamp(), lastLoggedOn: serverTimestamp(), email: user.email });
+        console.log('Document created successfully!');
+      } catch (error) {
+        console.error('Error creating document:', error);
+      }
+    }
+  }
   const handleVerifyCode = () => {
     const credential = PhoneAuthProvider.credential(verificationId, verificationCode);
 
@@ -180,6 +201,7 @@ const Login = () => {
         // User successfully authenticated with their phone number
         console.log('Phone authentication successful:', result.user);
         toast.success('Login Successful!');
+        createDoc(result.user);
         navigate(location.state?.from || '/');
       })
       .catch((error) => {
@@ -192,9 +214,11 @@ const Login = () => {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider)
-        .then((result) => {
-          const user = result.user.auth;
+        .then(async (result) => {
+          const user = result.user;
           toast.success('Login Successful!');
+          console.log(user.uid)
+          createDoc(user)
           navigate(location.state?.from || '/');
         })
         .catch((error) => {
