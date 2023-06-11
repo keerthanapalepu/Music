@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell, IconButton } from '@mui/material';
 import { BsPlayCircleFill, BsPauseCircleFill } from 'react-icons/bs';
 
@@ -6,7 +6,11 @@ const SongTable = ({ songs }) => {
   const [currentSong, setCurrentSong] = useState(null);
   const [audio, setAudio] = useState(null);
 
-  const handlePlay = (song) => {
+  useEffect(() => {
+    setCurrentSong(null);
+  }, [])
+  
+  const handlePlay = (song, index) => {
     if (audio) {
       audio.pause();
     }
@@ -15,10 +19,11 @@ const SongTable = ({ songs }) => {
     newAudio.addEventListener('timeupdate', () => {
       if (newAudio.currentTime > 15) {
         newAudio.pause();
+        setCurrentSong(null);
       }
     });
     setAudio(newAudio);
-    setCurrentSong(song.name);
+    setCurrentSong(index);
   };
 
   const handlePause = () => {
@@ -61,12 +66,12 @@ const SongTable = ({ songs }) => {
                 <TableCell>{song.singer}</TableCell>
                 <TableCell>{song.duration}</TableCell>
                 <TableCell>
-                  {currentSong === song.name ? (
+                  {currentSong === index ? (
                     <IconButton onClick={handlePause}>
                       <BsPauseCircleFill />
                     </IconButton>
                   ) : (
-                    <IconButton onClick={() => handlePlay(song)}>
+                    <IconButton onClick={() => handlePlay(song, index)}>
                       <BsPlayCircleFill />
                     </IconButton>
                   )}

@@ -143,7 +143,7 @@ const HomeScreen = () => {
       if (documentSnapshot.exists()) {
         const data = documentSnapshot.data();
         var songUrl = "";
-          const storageRef = ref(storage, `/music/${data.week}/${documentSnapshot.id}.mp3`);
+          const storageRef = ref(storage, `/music/${data.day}/${documentSnapshot.id}.mp3`);
 
           try {
             const url = await getDownloadURL(storageRef);
