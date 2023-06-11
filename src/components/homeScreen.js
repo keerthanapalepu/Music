@@ -9,6 +9,7 @@ import {
 } from "firebase/storage";
 import {BsChevronRight, BsChevronLeft} from 'react-icons/bs'
 import SongsList from './songsList';
+import { useAuth } from "../context/authContext";
 
 const useStyles = makeStyles((theme) => ({
   gridItem: {
@@ -67,11 +68,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 const HomeScreen = () => {
   const classes = useStyles();
+  const { currentUser } = useAuth();
   const [startIndex, setStartIndex] = useState(0);
   const [weekSongsArray, setWeekSongsArray] = useState([]);
   const [lastAddedOn, setLastAddedOn] = useState(null);
   const [selectedCard, setSelectedCard] = useState(null);
   const [allSongsArray, setAllSongsArray] = useState([]);
+  const [fav, setFav] = useState([]);
   const handleNext = () => {
     const nextIndex = startIndex + 4;
     setStartIndex(nextIndex >= weekSongsArray.length ? 0 : nextIndex);
@@ -112,7 +115,7 @@ const HomeScreen = () => {
                 break;
             }
           }
-        newDocs.push({ id: doc.id, url: imageUrl, week: doc.data().name, type: doc.data().type, theme: doc.data().theme, songs: doc.data().songsRef });
+        newDocs.push({ id: doc.id, url: imageUrl, day: doc.data().name, type: doc.data().type, theme: doc.data().theme, songs: doc.data().songsRef });
         setLastAddedOn(doc.data().addedOn);
       }));
 
@@ -125,10 +128,28 @@ const HomeScreen = () => {
     
   }
   
+  const getFavSongs = async () => {
+    try {
+      const favoritesRef = collection(db, `users/${currentUser.uid}/Favourite`);
+      const q = query(favoritesRef);
+      const querySnapshot = await getDocs(q);
+      
+      const favoritesData = await Promise.all(querySnapshot.docs.map((doc) => ({
+        ...doc.data()
+      })));
+      console.log(favoritesData)
+      setFav(favoritesData);
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+    }
+  }
+  
 
   useEffect(() => {
     async function fetchData() {
+      getFavSongs();
        getSongs();
+       
     }
     fetchData();
   }, []);
@@ -159,8 +180,12 @@ const HomeScreen = () => {
                 break;
             }
           }
-        // newDocs.push({name: data.name, singer: data.artist, url: songUrl});
-        return {name: data.name, singer: data.artist, url: songUrl, duration: '3:14'};
+          var Fav = false;
+          if(fav.length > 0){
+             Fav = fav.some(obj => obj.uid === item);
+          }
+          
+        return {name: data.name, singer: data.artist, url: songUrl, duration: '3:14', fav: Fav, id: item};
       }
      }))
      console.log(newDocs);
@@ -168,6 +193,7 @@ const HomeScreen = () => {
    }
    if(selectedCard!= null && selectedCard >= 0){
     setAllSongsArray([])
+    getFavSongs();
     fetchData();
     
    }
@@ -220,7 +246,7 @@ const HomeScreen = () => {
                   className={classes.image}
                   alt={item.name}
                 />
-                <Typography className={classes.title}>{item.week}</Typography>
+                <Typography className={classes.title}>{item.day}</Typography>
                 <Typography className={classes.theme}>{item.theme + "..."}</Typography>
               </div>
             </CardContent>
@@ -238,7 +264,7 @@ const HomeScreen = () => {
       </Grid>
 
       <Grid container item style={{ height: '55%', backgroundColor: '#6A695E', margin: '0 10px 0' }}>
-         <SongsList songs={allSongsArray}/>
+         <SongsList songs={allSongsArray} setAllSongsArray={setAllSongsArray} day={weekSongsArray[selectedCard]?.type}/>
       </Grid>
 
       <div>

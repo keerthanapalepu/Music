@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell, IconButton } from '@mui/material';
 import { BsPlayCircleFill, BsPauseCircleFill } from 'react-icons/bs';
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
+import { db } from '../services/firebase';
+import { collection, query, getDocs, where, doc, deleteDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { useAuth } from "../context/authContext";
 
-const SongTable = ({ songs }) => {
+const SongTable = ({ songs, day, setAllSongsArray }) => {
+  const { currentUser } = useAuth();
   const [currentSong, setCurrentSong] = useState(null);
   const [audio, setAudio] = useState(null);
-
+  const [songsList, setSongsList] = useState([]);
   useEffect(() => {
     setCurrentSong(null);
-  }, [])
+    setSongsList(songs)
+  }, [songs])
   
   const handlePlay = (song, index) => {
     if (audio) {
@@ -32,6 +38,35 @@ const SongTable = ({ songs }) => {
       setCurrentSong(null);
     }
   };
+  const handleFav = async(fav, index, favoriteId) => {
+    const updatedSongs = [...songsList];
+  updatedSongs[index].fav = !fav;
+  setSongsList([...updatedSongs]);
+  setAllSongsArray([...updatedSongs]);
+  const favoriteRef = doc(db, `users/${currentUser.uid}/Favourite`, favoriteId);
+  if(fav){
+    try {
+      
+      await deleteDoc(favoriteRef);
+    } catch (error) {
+      console.error('Error deleting favorite:', error);
+    }
+  }
+  else{
+    try {
+      const updatedFav = {
+        uid : favoriteId,
+        addedOn : serverTimestamp(),
+        day : day
+      };
+      
+      await setDoc(favoriteRef, updatedFav);
+    } catch (error) {
+      console.error('Error updating favorite:', error);
+    }
+  }
+
+  }
 
   return (
     <div style={{ overflowY: 'auto', height: '100%' }}>
@@ -55,11 +90,12 @@ const SongTable = ({ songs }) => {
             <TableCell>Artist</TableCell>
             <TableCell>Duration</TableCell>
             <TableCell>Play</TableCell>
+            <TableCell>Favourite</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {songs.length >= 0 && (
-            songs.map((song, index) => (
+          {songsList.length > 0 && (
+            songsList.map((song, index) => (
               <TableRow key={song.name} hover style={{ height: '50px' }}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{song.name}</TableCell>
@@ -73,6 +109,17 @@ const SongTable = ({ songs }) => {
                   ) : (
                     <IconButton onClick={() => handlePlay(song, index)}>
                       <BsPlayCircleFill />
+                    </IconButton>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {song.fav? (
+                    <IconButton onClick={() => handleFav(song.fav, index, song.id)}>
+                      <AiFillHeart />
+                    </IconButton>
+                  ) : (
+                    <IconButton onClick={() => handleFav(song.fav, index, song.id)}>
+                      <AiOutlineHeart />
                     </IconButton>
                   )}
                 </TableCell>
