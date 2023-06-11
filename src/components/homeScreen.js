@@ -96,7 +96,7 @@ const HomeScreen = () => {
 
       await Promise.all(querySnapshot.docs.map(async(doc) => {
         var imageUrl = "";
-          const storageRef = ref(storage, `/music/${doc.data().name}/${doc.data().name}.jpg`);
+          const storageRef = ref(storage, `/music/${doc.data().type}/${doc.data().type}.jpg`);
 
           try {
             const url = await getDownloadURL(storageRef);
@@ -112,7 +112,7 @@ const HomeScreen = () => {
                 break;
             }
           }
-        newDocs.push({ id: doc.id, url: imageUrl, week: doc.data().name, theme: doc.data().theme, songs: doc.data().songsRef });
+        newDocs.push({ id: doc.id, url: imageUrl, week: doc.data().name, type: doc.data().type, theme: doc.data().theme, songs: doc.data().songsRef });
         setLastAddedOn(doc.data().addedOn);
       }));
 
@@ -198,10 +198,11 @@ const HomeScreen = () => {
         </IconButton>
         <div
           style={{
-            width: `${weekSongsArray.length * 25}%`, // Adjust the width based on the number of weekSongsArray
+            width: `${weekSongsArray.length * 45}%`, // Adjust the width based on the number of weekSongsArray
             transform: `translateX(-${startIndex * (100 / weekSongsArray.length)}%)`, // Translate the cards based on the start index
             transition: 'transform 0.5s ease', // Apply the transition effect
             display: 'flex',
+            marginLeft: '50px'
           }}
         >
           {weekSongsArray.map((item, index) => (
@@ -219,7 +220,7 @@ const HomeScreen = () => {
                   className={classes.image}
                   alt={item.name}
                 />
-                <Typography className={classes.title}>{"WEEK 1"}</Typography>
+                <Typography className={classes.title}>{item.week}</Typography>
                 <Typography className={classes.theme}>{item.theme + "..."}</Typography>
               </div>
             </CardContent>
@@ -237,7 +238,7 @@ const HomeScreen = () => {
       </Grid>
 
       <Grid container item style={{ height: '55%', backgroundColor: '#6A695E', margin: '0 10px 0' }}>
-        {allSongsArray.length > 0 && (<SongsList songs={allSongsArray}/>)}
+         <SongsList songs={allSongsArray}/>
       </Grid>
 
       <div>
