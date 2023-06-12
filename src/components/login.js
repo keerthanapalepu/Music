@@ -10,7 +10,7 @@ import {
 } from 'firebase/auth';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
-import { makeStyles, TextField, Button, Card, Box} from '@material-ui/core';
+import { makeStyles, TextField, Button, Card, Box, Dialog, DialogTitle, DialogContent, DialogActions} from '@material-ui/core';
 import pic from '../images/pic.jpg'
 import GoogleSignInButton from './googleLogin';
 import 'react-phone-number-input/style.css'
@@ -19,7 +19,8 @@ import './login.css';
 import OTPInput from "otp-input-react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { collection, query, where, getDocs, setDoc, doc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, getDocs, setDoc, doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+
 import { db } from '../services/firebase';
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -60,7 +61,11 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
     color: '#f50057',
   },
-  
+  dialog: {
+    backgroundColor: 'beige',
+    borderRadius: theme.spacing(1),
+    boxShadow: theme.shadows[10],
+  },
 }));
 const Login = () => {
   const classes = useStyles();
@@ -73,9 +78,15 @@ const Login = () => {
   const [sendButtonVisible, setSendButtonVisible] = useState(true);
   const [resendButtonVisible, setResendButtonVisible] = useState(false);
   const [countdown, setCountdown] = useState(30);
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const recaptchaVerifierRef = useRef(null);
   const handlePhoneNumberChange = (value) => {
     setPhoneNumber(value);
+  };
+  const validateEmail = (email) => {
+    return /\S+@\S+\.\S+/.test(email);
   };
   useEffect(() => {
     if (currentUser) {
@@ -193,21 +204,36 @@ const Login = () => {
       }
     }
   }
-  const handleVerifyCode = () => {
+  const handleVerifyCode = async () => {
     const credential = PhoneAuthProvider.credential(verificationId, verificationCode);
 
     signInWithCredential(auth, credential)
-      .then((result) => {
+      .then(async (result) => {
         // User successfully authenticated with their phone number
         console.log('Phone authentication successful:', result.user);
         toast.success('Login Successful!');
-        createDoc(result.user);
-        navigate(location.state?.from || '/');
+        await createDoc(result.user);
+        
+        const docRef = doc(db, 'users', result.user.uid);
+        const documentSnapshot = await getDoc(docRef);
+        console.log(documentSnapshot.data())
+        if(!documentSnapshot.data().name  || !documentSnapshot.data().email ){
+          setName(documentSnapshot.data()? documentSnapshot.data().name : "");
+          setEmail(documentSnapshot.data()? documentSnapshot.data().email : "");
+          setOpen(true);
+        }
+        else{
+          navigate(location.state?.from || '/');
+        }
       })
       .catch((error) => {
         console.error('Error verifying verification code:', error);
         toast.error("Invalid OTP")
       });
+      
+  };
+  const handleClose = () => {
+    setOpen(false);
   };
 
   const handleGoogleLogin = async () => {
@@ -232,6 +258,16 @@ const Login = () => {
     }
   };
 
+  const handleSubmit = async () => {
+    if(name && validateEmail(email)){
+      const docRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(docRef, {
+        name: name,
+        email: email
+      });
+      navigate(location.state?.from || '/');
+    }
+  }
   return (
     <>
     <div className={classes.root}>
@@ -293,6 +329,35 @@ const Login = () => {
         
       </div>
     </Card>
+    <Dialog open={open} onClose={handleClose} classes={{ paper: classes.dialog }}>
+        <DialogTitle>Enter Name and Email</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Name"
+            type="text"
+            fullWidth
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <TextField
+          margin="dense"
+          label="Email"
+          type="email"
+          fullWidth
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={!validateEmail(email)}
+          helperText={!validateEmail(email) ? 'Please enter a valid email' : ''}
+        />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleSubmit} color="primary">
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
   </div>
   <div id="recaptcha-container"></div>
   </>
