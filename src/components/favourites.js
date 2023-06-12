@@ -104,7 +104,7 @@ function Favourite() {
   }
   }
   return (
-<div style={{ overflowY: 'auto', height: '100%' }}>
+<div style={{ overflowY: 'auto', height: '88%' , margin: '20px',borderRadius: "8px", backgroundColor: "#A7A7A7"}}>
       <style>
         {`
         ::-webkit-scrollbar {
