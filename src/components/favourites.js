@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableHead, TableBody, TableRow, TableCell, IconButton } from '@mui/material';
+import { Table, TableHead, TableBody, TableRow, TableCell, IconButton, Button } from '@mui/material';
 import { BsPlayCircleFill, BsPauseCircleFill } from 'react-icons/bs';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { db, storage } from '../services/firebase';
@@ -11,6 +11,7 @@ import {
 } from "firebase/storage";
 function Favourite() {
   const [fav, setFav] = useState([]);
+  const [cart, setCart] = useState([]);
   const [currentSong, setCurrentSong] = useState(null);
   const [audio, setAudio] = useState(null);
   const [allSongsArray, setAllSongsArray] = useState([]);
@@ -49,8 +50,13 @@ function Favourite() {
                   break;
               }
             }
+            var Cart = false;
+            if(cart.length > 0){
+               Cart = cart.some(obj => obj.uid === item);
+            }
+            
            
-          return {name: data.name, singer: data.artist, url: songUrl, duration: '3:14', fav: true, id: item.uid};
+          return {name: data.name, singer: data.artist, url: songUrl, duration: '3:14', fav: true, cart: Cart, id: item.uid};
         }
        }))
        setAllSongsArray((prevDocs) => [...prevDocs, ...newDocs]);
@@ -58,11 +64,25 @@ function Favourite() {
       console.error('Error fetching favorites:', error);
     }
   }
-  
+  const getCartSongs = async () => {
+    try {
+      const CartRef = collection(db, `users/${currentUser.uid}/Cart`);
+      const q = query(CartRef);
+      const querySnapshot = await getDocs(q);
+      
+      const CartData = await Promise.all(querySnapshot.docs.map((doc) => ({
+        ...doc.data()
+      })));
+      console.log(CartData)
+      setCart(CartData);
+    } catch (error) {
+      console.error('Error fetching Cart:', error);
+    }
+  }
   useEffect(() => {
     async function fetchData() {
       getFavSongs();
-       
+      getCartSongs();
     }
     fetchData();
   }, [])
@@ -103,6 +123,36 @@ function Favourite() {
     }
   }
   }
+  const handleCart = async(cart, index, songId) => {
+    const updatedSongs = [...allSongsArray];
+  updatedSongs[index].cart = !cart;
+  setAllSongsArray([...updatedSongs]);
+  const CartRef = doc(db, `users/${currentUser.uid}/Cart`, songId);
+  if(cart){
+    try {
+      
+      await deleteDoc(CartRef);
+    } catch (error) {
+      console.error('Error deleting Cart:', error);
+    }
+  }
+  else{
+    try {
+      const docRef = doc(db, 'songs', songId);
+      const documentSnapshot = await getDoc(docRef);
+      const updatedFav = {
+        uid : songId,
+        addedOn : serverTimestamp(),
+        day : documentSnapshot.data().day
+      };
+      
+      await setDoc(CartRef, updatedFav);
+    } catch (error) {
+      console.error('Error updating Cart:', error);
+    }
+  }
+
+  }
   return (
 <div style={{ overflowY: 'auto', height: '88%' , margin: '20px',borderRadius: "8px", backgroundColor: "#A7A7A7"}}>
       <style>
@@ -126,6 +176,7 @@ function Favourite() {
             <TableCell>Duration</TableCell>
             <TableCell>Play</TableCell>
             <TableCell>Favourite</TableCell>
+            <TableCell>Cart</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -156,6 +207,17 @@ function Favourite() {
                     <IconButton onClick={() => handleFav(song.fav, index, song.id)}>
                       <AiOutlineHeart />
                     </IconButton>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {song.cart? (
+                    <Button variant="contained" style={{backgroundColor: "#A5A492"}} onClick={() => handleCart(song.cart, index, song.id)}>
+                       REMOVE
+                    </Button>
+                  ) : (
+                    <Button variant="contained"style={{backgroundColor: "#A5A492"}} onClick={() => handleCart(song.cart, index, song.id)}>
+                      ADD
+                    </Button>
                   )}
                 </TableCell>
               </TableRow>

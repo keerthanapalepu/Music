@@ -75,6 +75,7 @@ const HomeScreen = () => {
   const [selectedCard, setSelectedCard] = useState(null);
   const [allSongsArray, setAllSongsArray] = useState([]);
   const [fav, setFav] = useState([]);
+  const [cart, setCart] = useState([]);
   const handleNext = () => {
     const nextIndex = startIndex + 4;
     setStartIndex(nextIndex >= weekSongsArray.length ? 0 : nextIndex);
@@ -143,11 +144,27 @@ const HomeScreen = () => {
       console.error('Error fetching favorites:', error);
     }
   }
+  const getCartSongs = async () => {
+    try {
+      const CartRef = collection(db, `users/${currentUser.uid}/Cart`);
+      const q = query(CartRef);
+      const querySnapshot = await getDocs(q);
+      
+      const CartData = await Promise.all(querySnapshot.docs.map((doc) => ({
+        ...doc.data()
+      })));
+      console.log(CartData)
+      setCart(CartData);
+    } catch (error) {
+      console.error('Error fetching Cart:', error);
+    }
+  }
   
 
   useEffect(() => {
     async function fetchData() {
       getFavSongs();
+      getCartSongs();
        getSongs();
        
     }
@@ -184,8 +201,12 @@ const HomeScreen = () => {
           if(fav.length > 0){
              Fav = fav.some(obj => obj.uid === item);
           }
+          var Cart = false;
+          if(cart.length > 0){
+             Cart = cart.some(obj => obj.uid === item);
+          }
           
-        return {name: data.name, singer: data.artist, url: songUrl, duration: '3:14', fav: Fav, id: item};
+        return {name: data.name, singer: data.artist, url: songUrl, duration: '3:14', fav: Fav, cart: Cart, id: item};
       }
      }))
      console.log(newDocs);
@@ -194,6 +215,7 @@ const HomeScreen = () => {
    if(selectedCard!= null && selectedCard >= 0){
     setAllSongsArray([])
     getFavSongs();
+    getCartSongs();
     fetchData();
     
    }

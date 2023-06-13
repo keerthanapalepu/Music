@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableHead, TableBody, TableRow, TableCell, IconButton } from '@mui/material';
+import { Table, TableHead, TableBody, TableRow, TableCell, IconButton, Button } from '@mui/material';
 import { BsPlayCircleFill, BsPauseCircleFill } from 'react-icons/bs';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
+import { BsFillCartFill, BsCart } from 'react-icons/bs';
 import { db } from '../services/firebase';
 import { collection, query, getDocs, where, doc, deleteDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from "../context/authContext";
@@ -67,6 +68,35 @@ const SongTable = ({ songs, day, setAllSongsArray }) => {
   }
 
   }
+  const handleCart = async(cart, index, songId) => {
+    const updatedSongs = [...songsList];
+  updatedSongs[index].cart = !cart;
+  setSongsList([...updatedSongs]);
+  setAllSongsArray([...updatedSongs]);
+  const CartRef = doc(db, `users/${currentUser.uid}/Cart`, songId);
+  if(cart){
+    try {
+      
+      await deleteDoc(CartRef);
+    } catch (error) {
+      console.error('Error deleting Cart:', error);
+    }
+  }
+  else{
+    try {
+      const updatedFav = {
+        uid : songId,
+        addedOn : serverTimestamp(),
+        day : day
+      };
+      
+      await setDoc(CartRef, updatedFav);
+    } catch (error) {
+      console.error('Error updating Cart:', error);
+    }
+  }
+
+  }
 
   return (
     <div style={{ overflowY: 'auto', height: '100%' }}>
@@ -91,6 +121,7 @@ const SongTable = ({ songs, day, setAllSongsArray }) => {
             <TableCell>Duration</TableCell>
             <TableCell>Play</TableCell>
             <TableCell>Favourite</TableCell>
+            <TableCell> Add to Cart   <BsFillCartFill /></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -121,6 +152,17 @@ const SongTable = ({ songs, day, setAllSongsArray }) => {
                     <IconButton onClick={() => handleFav(song.fav, index, song.id)}>
                       <AiOutlineHeart />
                     </IconButton>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {song.cart? (
+                    <Button variant="contained" style={{backgroundColor: "#A5A492"}} onClick={() => handleCart(song.cart, index, song.id)}>
+                       REMOVE
+                    </Button>
+                  ) : (
+                    <Button variant="contained"style={{backgroundColor: "#A5A492"}} onClick={() => handleCart(song.cart, index, song.id)}>
+                      ADD
+                    </Button>
                   )}
                 </TableCell>
               </TableRow>
