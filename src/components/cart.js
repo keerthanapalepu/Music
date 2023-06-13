@@ -11,7 +11,6 @@ import {
   ref,
 } from "firebase/storage";
 function Cart() {
-  const [cart, setCart] = useState([]);
   const [currentSong, setCurrentSong] = useState(null);
   const [audio, setAudio] = useState(null);
   const [allSongsArray, setAllSongsArray] = useState([]);
@@ -132,11 +131,33 @@ function Cart() {
 			handler: async (response) => {
         const verifyPayment = httpsCallable(functions, 'paymentVerification');
         verifyPayment(response)
-        .then((response) => {
+        .then(async (response) => {
           console.log(response.data);
+          await Promise.all(allSongsArray.map(async (item) => {
+            const CartRef = doc(db, `users/${currentUser.uid}/Cart`, item.id);
+            const DownloadRef = doc(db, `users/${currentUser.uid}/Download`, item.id);
+              try {
+                await deleteDoc(CartRef);
+              } catch (error) {
+                console.error('Error deleting Cart:', error);
+              }
+              try {
+                const docRef = doc(db, 'songs', item.id);
+                const documentSnapshot = await getDoc(docRef);
+                const updatedFav = {
+                  uid : item.id,
+                  addedOn : serverTimestamp(),
+                  day : documentSnapshot.data().day
+                };
+                
+                await setDoc(DownloadRef, updatedFav);
+              } catch (error) {
+                console.error('Error updating Cart:', error);
+              }
+          }))
+          setAllSongsArray([])
         })
         .catch(error => {
-          console.log("hello")
           console.error('Error:', error);
         });
 			},
@@ -150,7 +171,7 @@ function Cart() {
 
 	const handlePayment = async () => {
     const createOrder = httpsCallable(functions, 'createOrder');
-    createOrder({amount : 1})
+    createOrder({amount : allSongsArray.length * 50})
     .then((response) => {
       initPayment(response.data.data);
     })
