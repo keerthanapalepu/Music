@@ -1,22 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableHead, TableBody, TableRow, TableCell, IconButton, Button } from '@mui/material';
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  IconButton,
+  Button,
+} from '@mui/material';
 import { BsPlayCircleFill, BsPauseCircleFill } from 'react-icons/bs';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
-import { BsFillCartFill, BsCart } from 'react-icons/bs';
-import { db } from '../services/firebase';
-import { collection, query, getDocs, where, doc, deleteDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { BsFillCartFill } from 'react-icons/bs';
 import { useAuth } from "../context/authContext";
+import { useUserSongs } from "../context/songsContext";
+import { handleCurrentUserSongs } from "./helperFunctions";
 
 const SongTable = ({ songs, day, setAllSongsArray }) => {
   const { currentUser } = useAuth();
+  const { userCartSongs, userFavSongs, setUserFavSongs, setUserCartSongs } = useUserSongs();
   const [currentSong, setCurrentSong] = useState(null);
   const [audio, setAudio] = useState(null);
   const [songsList, setSongsList] = useState([]);
+
   useEffect(() => {
     setCurrentSong(null);
-    setSongsList(songs)
-  }, [songs])
-  
+    setSongsList(songs);
+  }, [songs]);
+
   const handlePlay = (song, index) => {
     if (audio) {
       audio.pause();
@@ -39,64 +49,26 @@ const SongTable = ({ songs, day, setAllSongsArray }) => {
       setCurrentSong(null);
     }
   };
-  const handleFav = async(fav, index, favoriteId) => {
-    const updatedSongs = [...songsList];
-  updatedSongs[index].fav = !fav;
-  setSongsList([...updatedSongs]);
-  setAllSongsArray([...updatedSongs]);
-  const favoriteRef = doc(db, `users/${currentUser.uid}/Favourite`, favoriteId);
-  if(fav){
-    try {
-      
-      await deleteDoc(favoriteRef);
-    } catch (error) {
-      console.error('Error deleting favorite:', error);
-    }
-  }
-  else{
-    try {
-      const updatedFav = {
-        uid : favoriteId,
-        addedOn : serverTimestamp(),
-        day : day
-      };
-      
-      await setDoc(favoriteRef, updatedFav);
-    } catch (error) {
-      console.error('Error updating favorite:', error);
-    }
-  }
 
-  }
-  const handleCart = async(cart, index, songId) => {
+  const handleController = async (boolType, index, songId, type) => {
     const updatedSongs = [...songsList];
-  updatedSongs[index].cart = !cart;
-  setSongsList([...updatedSongs]);
-  setAllSongsArray([...updatedSongs]);
-  const CartRef = doc(db, `users/${currentUser.uid}/Cart`, songId);
-  if(cart){
-    try {
-      
-      await deleteDoc(CartRef);
-    } catch (error) {
-      console.error('Error deleting Cart:', error);
+    if (type === "Favourite") {
+      updatedSongs[index].fav = !boolType;
+    } else {
+      updatedSongs[index].cart = !boolType;
     }
-  }
-  else{
-    try {
-      const updatedFav = {
-        uid : songId,
-        addedOn : serverTimestamp(),
-        day : day
-      };
-      
-      await setDoc(CartRef, updatedFav);
-    } catch (error) {
-      console.error('Error updating Cart:', error);
-    }
-  }
-
-  }
+    setSongsList([...updatedSongs]);
+    setAllSongsArray([...updatedSongs]);
+    await handleCurrentUserSongs(
+      boolType,
+      songId,
+      type,
+      currentUser.uid,
+      day,
+      type === "Favourite" ? setUserFavSongs : setUserCartSongs,
+      type === "Favourite" ? userFavSongs : userCartSongs
+    );
+  };
 
   return (
     <div style={{ overflowY: 'auto', height: '100%' }}>
@@ -144,23 +116,23 @@ const SongTable = ({ songs, day, setAllSongsArray }) => {
                   )}
                 </TableCell>
                 <TableCell>
-                  {song.fav? (
-                    <IconButton onClick={() => handleFav(song.fav, index, song.id)}>
+                  {song.fav ? (
+                    <IconButton onClick={() => handleController(song.fav, index, song.id, "Favourite")}>
                       <AiFillHeart />
                     </IconButton>
                   ) : (
-                    <IconButton onClick={() => handleFav(song.fav, index, song.id)}>
+                    <IconButton onClick={() => handleController(song.fav, index, song.id, "Favourite")}>
                       <AiOutlineHeart />
                     </IconButton>
                   )}
                 </TableCell>
                 <TableCell>
-                  {song.cart? (
-                    <Button variant="contained" style={{backgroundColor: "#A5A492"}} onClick={() => handleCart(song.cart, index, song.id)}>
-                       REMOVE
+                  {song.cart ? (
+                    <Button variant="contained" style={{ backgroundColor: "#A5A492" }} onClick={() => handleController(song.cart, index, song.id, "Cart")}>
+                      REMOVE
                     </Button>
                   ) : (
-                    <Button variant="contained"style={{backgroundColor: "#A5A492"}} onClick={() => handleCart(song.cart, index, song.id)}>
+                    <Button variant="contained" style={{ backgroundColor: "#A5A492" }} onClick={() => handleController(song.cart, index, song.id, "Cart")}>
                       ADD
                     </Button>
                   )}

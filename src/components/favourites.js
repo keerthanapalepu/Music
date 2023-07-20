@@ -33,7 +33,7 @@ function Favourite() {
         const documentSnapshot = await getDoc(docRef);
         if (documentSnapshot.exists()) {
           const data = documentSnapshot.data();
-          var songUrl = "";
+          let songUrl = "";
             const storageRef = ref(storage, `/music/${data.day}/${documentSnapshot.id}.mp3`);
   
             try {
@@ -50,7 +50,7 @@ function Favourite() {
                   break;
               }
             }
-            var Cart = false;
+            let Cart = false;
             if(cart.length > 0){
                Cart = cart.some(obj => obj.uid === item);
             }

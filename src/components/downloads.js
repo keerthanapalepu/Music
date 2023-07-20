@@ -31,7 +31,7 @@ function Download() {
         const documentSnapshot = await getDoc(docRef);
         if (documentSnapshot.exists()) {
           const data = documentSnapshot.data();
-          var songUrl = "";
+          let songUrl = "";
             const storageRef = ref(storage, `/music/${data.day}/${documentSnapshot.id}.mp3`);
   
             try {
