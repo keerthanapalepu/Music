@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardContent, Typography } from '@material-ui/core';
-import useStyles from './homeStyles';
+import useStyles from '../homeStyles';
 
 const CardItem = ({ item, onClick }) => {
   const classes = useStyles();

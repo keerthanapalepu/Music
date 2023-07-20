@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Grid, IconButton } from '@material-ui/core';
 import { BsChevronRight } from 'react-icons/bs';
 import { collection, limit, orderBy, query, startAfter, getDocs } from '@firebase/firestore';
-import { db } from '../services/firebase';
+import { db } from '../../services/firebase';
 import CardItem from './cardItem';
-import SongsList from './songsList';
-import { useUserSongs } from "../context/songsContext";
-import { getMediaUrl, fetchSongData } from "./helperFunctions";
-import useStyles from './homeStyles';
+import SongsList from '../songsList';
+import { useUserSongs } from "../../context/songsContext";
+import { getMediaUrl, fetchSongData } from "../helperFunctions";
+import useStyles from '../homeStyles';
 
 const HomeScreen = () => {
   const classes = useStyles();

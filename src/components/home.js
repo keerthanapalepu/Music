@@ -7,7 +7,7 @@ import SideBar from './sideBar';
 import {HiShoppingCart} from "react-icons/hi";
 import {RiAccountCircleFill} from "react-icons/ri";
 import {AiOutlineDownload} from "react-icons/ai"
-import HomeScreen from './homeScreen';
+import HomeScreen from './Home/homeScreen';
 import Download from './downloads';
 import Favourite from './favourites';
 import Cart from './cart';
