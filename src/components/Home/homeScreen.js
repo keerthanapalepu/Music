@@ -4,10 +4,10 @@ import { BsChevronRight } from 'react-icons/bs';
 import { collection, limit, orderBy, query, startAfter, getDocs } from '@firebase/firestore';
 import { db } from '../../services/firebase';
 import CardItem from './cardItem';
-import SongsList from '../songsList';
+import SongsList from './songsList';
 import { useUserSongs } from "../../context/songsContext";
 import { getMediaUrl, fetchSongData } from "../helperFunctions";
-import useStyles from '../homeStyles';
+import useStyles from './homeStyles';
 
 const HomeScreen = () => {
   const classes = useStyles();
@@ -89,7 +89,7 @@ const HomeScreen = () => {
         </div>
       </div>
 
-      <Grid container item style={{ height: '55%', backgroundColor: '#6A695E', margin: '0 10px 0' }}>
+      <Grid container item style={{ height: '65%', backgroundColor: '#6A695E', margin: '0 10px 0' }}>
         <SongsList songs={allSongsArray} setAllSongsArray={setAllSongsArray} day={weekSongsArray[selectedCard]?.type} />
       </Grid>
 

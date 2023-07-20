@@ -5,16 +5,12 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  IconButton,
-  Button,
 } from '@mui/material';
-import { BsPlayCircleFill, BsPauseCircleFill } from 'react-icons/bs';
-import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { BsFillCartFill } from 'react-icons/bs';
-import { useAuth } from "../context/authContext";
-import { useUserSongs } from "../context/songsContext";
-import { handleCurrentUserSongs } from "./helperFunctions";
-
+import { useAuth } from "../../context/authContext";
+import { useUserSongs } from "../../context/songsContext";
+import { handleCurrentUserSongs } from "../helperFunctions";
+import SongTableRow from "./songRow"
 const SongTable = ({ songs, day, setAllSongsArray }) => {
   const { currentUser } = useAuth();
   const { userCartSongs, userFavSongs, setUserFavSongs, setUserCartSongs } = useUserSongs();
@@ -99,45 +95,15 @@ const SongTable = ({ songs, day, setAllSongsArray }) => {
         <TableBody>
           {songsList.length > 0 && (
             songsList.map((song, index) => (
-              <TableRow key={song.name} hover style={{ height: '50px' }}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{song.name}</TableCell>
-                <TableCell>{song.singer}</TableCell>
-                <TableCell>{song.duration}</TableCell>
-                <TableCell>
-                  {currentSong === index ? (
-                    <IconButton onClick={handlePause}>
-                      <BsPauseCircleFill />
-                    </IconButton>
-                  ) : (
-                    <IconButton onClick={() => handlePlay(song, index)}>
-                      <BsPlayCircleFill />
-                    </IconButton>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {song.fav ? (
-                    <IconButton onClick={() => handleController(song.fav, index, song.id, "Favourite")}>
-                      <AiFillHeart />
-                    </IconButton>
-                  ) : (
-                    <IconButton onClick={() => handleController(song.fav, index, song.id, "Favourite")}>
-                      <AiOutlineHeart />
-                    </IconButton>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {song.cart ? (
-                    <Button variant="contained" style={{ backgroundColor: "#A5A492" }} onClick={() => handleController(song.cart, index, song.id, "Cart")}>
-                      REMOVE
-                    </Button>
-                  ) : (
-                    <Button variant="contained" style={{ backgroundColor: "#A5A492" }} onClick={() => handleController(song.cart, index, song.id, "Cart")}>
-                      ADD
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
+              <SongTableRow
+                key={song.name}
+                song={song}
+                index={index}
+                currentSong={currentSong}
+                handlePlay={handlePlay}
+                handlePause={handlePause}
+                handleController={handleController}
+              />
             ))
           )}
         </TableBody>

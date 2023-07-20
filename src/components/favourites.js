@@ -1,88 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableHead, TableBody, TableRow, TableCell, IconButton, Button } from '@mui/material';
-import { BsPlayCircleFill, BsPauseCircleFill } from 'react-icons/bs';
-import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
-import { db, storage } from '../services/firebase';
-import {collection, limit, orderBy, query, startAfter, getDocs, doc, getDoc, serverTimestamp, deleteDoc, setDoc} from '@firebase/firestore'
+import { Table, TableHead, TableBody, TableRow, TableCell} from '@mui/material';
+import { db } from '../services/firebase';
+import { doc, getDoc} from '@firebase/firestore'
 import { useAuth } from "../context/authContext";
-import {
-  getDownloadURL,
-  ref,
-} from "firebase/storage";
+import { useUserSongs } from "../context/songsContext";
+import {fetchSongData, handleCurrentUserSongs } from "./helperFunctions";
+import SongTableRow from "./Home/songRow"
+
 function Favourite() {
-  const [fav, setFav] = useState([]);
-  const [cart, setCart] = useState([]);
+  const { userCartSongs, userFavSongs, setUserFavSongs, setUserCartSongs } = useUserSongs();
   const [currentSong, setCurrentSong] = useState(null);
   const [audio, setAudio] = useState(null);
   const [allSongsArray, setAllSongsArray] = useState([]);
   const { currentUser } = useAuth();
-
-  const getFavSongs = async () => {
-    try {
-      const favoritesRef = collection(db, `users/${currentUser.uid}/Favourite`);
-      const q = query(favoritesRef);
-      const querySnapshot = await getDocs(q);
-      
-      const favoritesData = await Promise.all(querySnapshot.docs.map((doc) => ({
-        ...doc.data()
-      })));
-      // console.log(favoritesData)
-      setFav(favoritesData);
-      const newDocs = await Promise.all(favoritesData.map(async (item) => {
-        const docRef = doc(db, 'songs', item.uid);
-        const documentSnapshot = await getDoc(docRef);
-        if (documentSnapshot.exists()) {
-          const data = documentSnapshot.data();
-          let songUrl = "";
-            const storageRef = ref(storage, `/music/${data.day}/${documentSnapshot.id}.mp3`);
   
-            try {
-              const url = await getDownloadURL(storageRef);
-              songUrl = url;
-            } catch (error) {
-              switch (error.code) {
-                case "storage/object-not-found":
-                  console.log("File doesn't exist");
-                  songUrl = "";
-                  break;
-                default:
-                  songUrl = "";
-                  break;
-              }
-            }
-            let Cart = false;
-            if(cart.length > 0){
-               Cart = cart.some(obj => obj.uid === item);
-            }
-            
-           
-          return {name: data.name, singer: data.artist, url: songUrl, duration: '3:14', fav: true, cart: Cart, id: item.uid};
-        }
-       }))
-       setAllSongsArray((prevDocs) => [...prevDocs, ...newDocs]);
-    } catch (error) {
-      console.error('Error fetching favorites:', error);
-    }
-  }
-  const getCartSongs = async () => {
-    try {
-      const CartRef = collection(db, `users/${currentUser.uid}/Cart`);
-      const q = query(CartRef);
-      const querySnapshot = await getDocs(q);
-      
-      const CartData = await Promise.all(querySnapshot.docs.map((doc) => ({
-        ...doc.data()
-      })));
-      console.log(CartData)
-      setCart(CartData);
-    } catch (error) {
-      console.error('Error fetching Cart:', error);
-    }
-  }
   useEffect(() => {
     async function fetchData() {
-      getFavSongs();
-      getCartSongs();
+      const songsArray =  userFavSongs.map((obj) => obj.uid);
+      const newDocs = await fetchSongData(songsArray, userFavSongs, userCartSongs);
+       setAllSongsArray((prevDocs) => [...prevDocs, ...newDocs]);
     }
     fetchData();
   }, [])
@@ -109,50 +45,28 @@ function Favourite() {
       setCurrentSong(null);
     }
   };
-  const handleFav = async(fav, index, favoriteId) => {
+ 
+  const handleController = async (boolType, index, songId, type) => {
     const updatedSongs = [...allSongsArray];
-  updatedSongs.splice(index, 1);
-  setAllSongsArray([...updatedSongs]);
-  const favoriteRef = doc(db, `users/${currentUser.uid}/Favourite`, favoriteId);
-  if(fav){
-    try {
-      
-      await deleteDoc(favoriteRef);
-    } catch (error) {
-      console.error('Error deleting favorite:', error);
+    if (type === "Favourite") {
+      updatedSongs.splice(index, 1);
+    } else {
+      updatedSongs[index].cart = !boolType;
     }
-  }
-  }
-  const handleCart = async(cart, index, songId) => {
-    const updatedSongs = [...allSongsArray];
-  updatedSongs[index].cart = !cart;
-  setAllSongsArray([...updatedSongs]);
-  const CartRef = doc(db, `users/${currentUser.uid}/Cart`, songId);
-  if(cart){
-    try {
-      
-      await deleteDoc(CartRef);
-    } catch (error) {
-      console.error('Error deleting Cart:', error);
-    }
-  }
-  else{
-    try {
-      const docRef = doc(db, 'songs', songId);
-      const documentSnapshot = await getDoc(docRef);
-      const updatedFav = {
-        uid : songId,
-        addedOn : serverTimestamp(),
-        day : documentSnapshot.data().day
-      };
-      
-      await setDoc(CartRef, updatedFav);
-    } catch (error) {
-      console.error('Error updating Cart:', error);
-    }
-  }
+    setAllSongsArray([...updatedSongs]);
+    const docRef = doc(db, 'songs', songId);
+    const documentSnapshot = await getDoc(docRef);
+    await handleCurrentUserSongs(
+      boolType,
+      songId,
+      type,
+      currentUser.uid,
+      documentSnapshot.data().day,
+      type === "Favourite" ? setUserFavSongs : setUserCartSongs,
+      type === "Favourite" ? userFavSongs : userCartSongs
+    );
+  };
 
-  }
   return (
 <div style={{ overflowY: 'auto', height: '88%' , margin: '20px',borderRadius: "8px", backgroundColor: "#A7A7A7"}}>
       <style>
@@ -182,45 +96,15 @@ function Favourite() {
         <TableBody>
           {allSongsArray.length > 0 && (
             allSongsArray.map((song, index) => (
-              <TableRow key={song.name} hover style={{ height: '50px' }}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{song.name}</TableCell>
-                <TableCell>{song.singer}</TableCell>
-                <TableCell>{song.duration}</TableCell>
-                <TableCell>
-                  {currentSong === index ? (
-                    <IconButton onClick={handlePause}>
-                      <BsPauseCircleFill />
-                    </IconButton>
-                  ) : (
-                    <IconButton onClick={() => handlePlay(song, index)}>
-                      <BsPlayCircleFill />
-                    </IconButton>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {song.fav? (
-                    <IconButton onClick={() => handleFav(song.fav, index, song.id)}>
-                      <AiFillHeart />
-                    </IconButton>
-                  ) : (
-                    <IconButton onClick={() => handleFav(song.fav, index, song.id)}>
-                      <AiOutlineHeart />
-                    </IconButton>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {song.cart? (
-                    <Button variant="contained" style={{backgroundColor: "#A5A492"}} onClick={() => handleCart(song.cart, index, song.id)}>
-                       REMOVE
-                    </Button>
-                  ) : (
-                    <Button variant="contained"style={{backgroundColor: "#A5A492"}} onClick={() => handleCart(song.cart, index, song.id)}>
-                      ADD
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
+              <SongTableRow
+                key={song.name}
+                song={song}
+                index={index}
+                currentSong={currentSong}
+                handlePlay={handlePlay}
+                handlePause={handlePause}
+                handleController={handleController}
+              />
             ))
           )}
         </TableBody>
