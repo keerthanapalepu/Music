@@ -23,8 +23,10 @@ export function UserSongsProvider({ children }) {
         setUserCartSongs(cartSongs);
         setLoadingSongs(false);
     }
-    fetchSongs();
-  }, []);
+    if(currentUser){
+      fetchSongs();
+    }
+  }, [currentUser]);
 
   const value = {
     userFavSongs,
