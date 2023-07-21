@@ -26,6 +26,9 @@ export function UserSongsProvider({ children }) {
     if(currentUser){
       fetchSongs();
     }
+    else{
+      setLoadingSongs(false);
+    }
   }, [currentUser]);
 
   const value = {

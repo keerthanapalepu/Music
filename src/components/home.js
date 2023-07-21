@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {Grid, IconButton, Card} from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import {  ThemeProvider } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles'
 import SideBar from './sideBar';
 import {HiShoppingCart} from "react-icons/hi";
 import {RiAccountCircleFill} from "react-icons/ri";
@@ -12,7 +13,7 @@ import Download from './downloads';
 import Favourite from './favourites';
 import Cart from './cart';
 import Profile from './profile';
-const theme = createMuiTheme({
+const theme = createTheme({
   overrides: {
     MuiPaper: {
       root: {
