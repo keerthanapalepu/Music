@@ -18,7 +18,7 @@ import './login.css';
 import OTPInput from "otp-input-react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {  setDoc, doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import useStyles from './loginStyles';
 import { db } from '../../services/firebase';
 import ProfileDialog from "./dialog";
@@ -149,7 +149,7 @@ const Login = () => {
       });
       
   };
-  
+
   const handleClose = () => {
     setOpen(false);
   };
