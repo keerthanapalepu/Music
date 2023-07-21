@@ -71,13 +71,13 @@ export const getCurrentUserSongs = async (uid, type) => {
       }
       else{
         try {
-          const updatedFav = {
+          const updated = {
             uid : songId,
             addedOn : serverTimestamp(),
             day : day
           };
-          setFunc((prev) => [...prev, updatedFav])
-          await setDoc(songRef, updatedFav);
+          setFunc((prev) => [...prev, updated])
+          await setDoc(songRef, updated);
         } catch (error) {
           console.error('Error updating song:', error);
         }

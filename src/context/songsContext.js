@@ -12,6 +12,7 @@ export function UserSongsProvider({ children }) {
   const { currentUser } = useAuth();
   const [userFavSongs, setUserFavSongs] = useState([]);
   const [userCartSongs, setUserCartSongs] = useState([]);
+  const [userDownloadSongs, setUserDownloadSongs] = useState([]);
   const [loadingSongs, setLoadingSongs] = useState(true);
 
   
@@ -21,6 +22,8 @@ export function UserSongsProvider({ children }) {
         setUserFavSongs(favSongs);
         const cartSongs = await getCurrentUserSongs(currentUser.uid, "Cart");
         setUserCartSongs(cartSongs);
+        const downloadSongs = await getCurrentUserSongs(currentUser.uid, "Download");
+        setUserDownloadSongs(downloadSongs);
         setLoadingSongs(false);
     }
     if(currentUser){
@@ -36,6 +39,8 @@ export function UserSongsProvider({ children }) {
     setUserFavSongs,
     userCartSongs,
     setUserCartSongs,
+    userDownloadSongs,
+    setUserDownloadSongs,
     loadingSongs,
   };
 

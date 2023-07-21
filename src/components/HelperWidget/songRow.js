@@ -1,10 +1,11 @@
 import React from 'react';
 import { TableRow, TableCell, IconButton, Button } from '@mui/material';
 import { BsPlayCircleFill, BsPauseCircleFill } from 'react-icons/bs';
-import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
+import { AiFillHeart, AiOutlineHeart, AiOutlineDownload } from 'react-icons/ai';
 
 
-const SongTableRow = ({ song, index, currentSong, handlePlay, handlePause, handleController }) => {
+
+const SongTableRow = ({ handleDownload, type, song, index, currentSong, handlePlay, handlePause, handleController }) => {
   return (
     <TableRow key={song.name} hover style={{ height: '50px' }}>
       <TableCell>{index + 1}</TableCell>
@@ -22,7 +23,7 @@ const SongTableRow = ({ song, index, currentSong, handlePlay, handlePause, handl
           </IconButton>
         )}
       </TableCell>
-      <TableCell>
+     {type !== "Download" && <TableCell>
         {song.fav ? (
           <IconButton onClick={() => handleController(song.fav, index, song.id, "Favourite")}>
             <AiFillHeart />
@@ -32,8 +33,8 @@ const SongTableRow = ({ song, index, currentSong, handlePlay, handlePause, handl
             <AiOutlineHeart />
           </IconButton>
         )}
-      </TableCell>
-      <TableCell>
+      </TableCell>}
+      {type !== "Download" && <TableCell>
         {song.cart ? (
           <Button variant="contained" style={{ backgroundColor: "#A5A492" }} onClick={() => handleController(song.cart, index, song.id, "Cart")}>
             REMOVE
@@ -43,7 +44,12 @@ const SongTableRow = ({ song, index, currentSong, handlePlay, handlePause, handl
             ADD
           </Button>
         )}
-      </TableCell>
+      </TableCell>}
+      {type === "Download" && <TableCell>
+        <IconButton onClick={() => handleDownload(song.url, song.name)}>
+          <AiOutlineDownload />
+        </IconButton>
+    </TableCell>}
     </TableRow>
   );
 };

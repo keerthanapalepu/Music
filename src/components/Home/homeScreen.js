@@ -89,7 +89,7 @@ const HomeScreen = () => {
         </div>
       </div>
 
-      <Grid container item style={{ height: '65%', backgroundColor: '#6A695E', margin: '0 10px 0' }}>
+      <Grid container item style={{ height: '75%'}}>
         <SongsList songs={allSongsArray} setAllSongsArray={setAllSongsArray} day={weekSongsArray[selectedCard]?.type} />
       </Grid>
 

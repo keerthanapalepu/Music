@@ -1,18 +1,19 @@
 import React, {useState} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import {Grid, IconButton, Card} from '@material-ui/core';
-import Paper from '@material-ui/core/Paper';
 import {  ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
-import SideBar from './sideBar';
 import {HiShoppingCart} from "react-icons/hi";
-import {RiAccountCircleFill} from "react-icons/ri";
-import {AiOutlineDownload} from "react-icons/ai"
-import HomeScreen from './Home/homeScreen';
-import Download from './downloads';
-import Favourite from './favourites';
-import Cart from './cart';
-import Profile from './profile';
+import {MdLogout} from "react-icons/md";
+import {AiOutlineDownload} from "react-icons/ai";
+
+import HomeScreen from './homeScreen';
+import Download from '../UserSongs/downloads';
+import Favourite from '../UserSongs/favourites';
+import Cart from '../UserSongs/cart';
+import SideBar from './sideBar';
+import useStyles from './styles';
+import{ auth } from "../../services/firebase"
+
 const theme = createTheme({
   overrides: {
     MuiPaper: {
@@ -30,41 +31,12 @@ const theme = createTheme({
   },
 });
 
-const useStyles = makeStyles((theme) => ({
-  iconButton: {
-    marginLeft: theme.spacing(1),
-    color: "#0C364F"
-  },
-  root: {
-    flexGrow: 1,
-    height: '100vh',
-  },
-  gridContainer: {
-    height: '100%',
-  },
-  gridItem: {
-    height: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-    '&::before': {
-      content: '""',
-      position: 'absolute',
-      backgroundColor: 'transparent',
-      zIndex: -1,
-      backdropFilter: 'blur',
-    },
-  },
-  card: {
-    height: 'calc(100% - 20px)',
-    width: 'calc(100% - 20px)',
-  },
-}));
+
 
 function HomePage() {
   const classes = useStyles();
   const [activeButton, setActiveButton] = useState('Home');
+  
 
   const handleButtonClick = (buttonName) => {
     setActiveButton(buttonName);
@@ -84,18 +56,17 @@ function HomePage() {
               <IconButton className={classes.iconButton} onClick={() => {setActiveButton("Cart")}}>
                 <HiShoppingCart />
               </IconButton>
-              <IconButton className={classes.iconButton} onClick={() => {setActiveButton("Profile")}}>
-                <RiAccountCircleFill />
-              </IconButton>
               <IconButton className={classes.iconButton} onClick={() => {setActiveButton("Downloads")}}>
                 <AiOutlineDownload />
+              </IconButton>
+              <IconButton className={classes.iconButton} onClick={() => {auth.signOut()}}>
+                <MdLogout />
               </IconButton>
             </div>
             {activeButton==="Home" && <HomeScreen />}
             {activeButton==="Downloads" && <Download />}
             {activeButton==="Favourite" && <Favourite />}
-            {activeButton==="Cart" && <Cart />}
-            {activeButton==="Profile" && <Profile />}
+            {activeButton==="Cart" && <Cart setActiveButton={setActiveButton} />}
             </Card>
           </Grid>
         </Grid>

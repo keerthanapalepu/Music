@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { auth } from '../services/firebase';
+import { auth } from '../../services/firebase';
 import {
   GoogleAuthProvider,
   signInWithPopup,
@@ -9,9 +9,9 @@ import {
   signInWithCredential,
 } from 'firebase/auth';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/authContext';
+import { useAuth } from '../../context/authContext';
 import { makeStyles, TextField, Button, Card, Box, Dialog, DialogTitle, DialogContent, DialogActions} from '@material-ui/core';
-import pic from '../images/pic.jpg'
+import pic from '../../images/pic.jpg'
 import GoogleSignInButton from './googleLogin';
 import 'react-phone-number-input/style.css'
 import PhoneInput from 'react-phone-number-input'
@@ -21,10 +21,10 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { collection, query, where, getDocs, setDoc, doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 
-import { db } from '../services/firebase';
+import { db } from '../../services/firebase';
 const useStyles = makeStyles((theme) => ({
   root: {
-    backgroundImage: `url(${pic})`, // Replace with the actual path to the background image
+    backgroundImage: `url(${pic})`, 
     backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "center",
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
       minHeight: '100vh',
   },
   card: {
-    background: 'transparent', // Transparent background with 50% opacity
+    background: 'transparent', 
     padding: theme.spacing(2),
     textAlign: 'center',
     backdropFilter: 'blur(10px)',
@@ -209,7 +209,6 @@ const Login = () => {
 
     signInWithCredential(auth, credential)
       .then(async (result) => {
-        // User successfully authenticated with their phone number
         console.log('Phone authentication successful:', result.user);
         toast.success('Login Successful!');
         await createDoc(result.user);
