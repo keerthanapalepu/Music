@@ -1,6 +1,27 @@
 import { db, storage } from '../services/firebase';
 import { getDownloadURL, ref} from "firebase/storage";
-import {collection, limit, orderBy, query, serverTimestamp, startAfter, deleteDoc, getDocs, doc, getDoc, setDoc} from '@firebase/firestore'
+import {collection, query, serverTimestamp,  deleteDoc, getDocs, doc, getDoc, setDoc} from '@firebase/firestore'
+
+export const createDoc = async (user) => {
+  const docRef = doc(db, 'users', user.uid);
+  const documentSnapshot = await getDoc(docRef);
+
+  if (documentSnapshot.exists()) {
+    try {
+      await setDoc(docRef, { lastLoggedOn: serverTimestamp() }, { merge: true });
+      console.log('Document updated successfully!');
+    } catch (error) {
+      console.error('Error updating document:', error);
+    }
+  } else {
+    try {
+      await setDoc(docRef,{ uid : user.uid, name: user.displayName, phoneNumber: user.phoneNumber, createdOn: serverTimestamp(), lastLoggedOn: serverTimestamp(), email: user.email });
+      console.log('Document created successfully!');
+    } catch (error) {
+      console.error('Error creating document:', error);
+    }
+  }
+}
 
 export const  getMediaUrl = async  (path) => {
     let mediaUrl = "";
@@ -19,6 +40,8 @@ export const  getMediaUrl = async  (path) => {
       }
       return mediaUrl;
 }
+
+
 
 export const getCurrentUserSongs = async (uid, type) => {
     let songsData = [];
@@ -83,3 +106,4 @@ export const getCurrentUserSongs = async (uid, type) => {
         }
       }
   }
+

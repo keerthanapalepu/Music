@@ -10,8 +10,7 @@ import {
 } from 'firebase/auth';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
-import { makeStyles, TextField, Button, Card, Box, Dialog, DialogTitle, DialogContent, DialogActions} from '@material-ui/core';
-import pic from '../../images/pic.jpg'
+import { Button, Card, Box} from '@material-ui/core';
 import GoogleSignInButton from './googleLogin';
 import 'react-phone-number-input/style.css'
 import PhoneInput from 'react-phone-number-input'
@@ -19,54 +18,12 @@ import './login.css';
 import OTPInput from "otp-input-react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { collection, query, where, getDocs, setDoc, doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
-
+import {  setDoc, doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import useStyles from './loginStyles';
 import { db } from '../../services/firebase';
-const useStyles = makeStyles((theme) => ({
-  root: {
-    backgroundImage: `url(${pic})`, 
-    backgroundSize: "cover",
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "center",
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '100vh',
-  },
-  card: {
-    background: 'transparent', 
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    backdropFilter: 'blur(10px)',
-    width: "500px",
-    marginRight: theme.spacing(100)
-  },
-  container: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: theme.spacing(2),
-    paddingTop: '20px'
-  },
-  input: {
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: '#f9f1f6',
-    backdropFilter: 'blur(4px)',
-    width: '200px',
-    marginBottom: theme.spacing(2),
-  },
-  countryCode: {
-    marginRight: theme.spacing(1),
-    color: '#f50057',
-  },
-  dialog: {
-    backgroundColor: 'beige',
-    borderRadius: theme.spacing(1),
-    boxShadow: theme.shadows[10],
-  },
-}));
+import ProfileDialog from "./dialog";
+import {formatFirebaseErrorCode} from "./loginHelper";
+import {createDoc} from "../helperFunctions";
 const Login = () => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -85,14 +42,17 @@ const Login = () => {
   const handlePhoneNumberChange = (value) => {
     setPhoneNumber(value);
   };
+
   const validateEmail = (email) => {
     return /\S+@\S+\.\S+/.test(email);
   };
+
   useEffect(() => {
     if (currentUser) {
       navigate('/');
     }
   }, []);
+
   useEffect(() => {
     let timer;
     if (resendButtonVisible && countdown > 0) {
@@ -104,29 +64,6 @@ const Login = () => {
   }, [resendButtonVisible, countdown]);
 
 
-  function formatFirebaseErrorCode(errorMessage) {
-    if(errorMessage){
-      console.log(JSON.parse(JSON.stringify(errorMessage)))
-    const FirebaseError = JSON.parse(JSON.stringify(errorMessage))
-    if(FirebaseError.code){
-      const errorCode = FirebaseError.code.split('/')[1]; // Extracting the text inside the brackets
-  
-      const formattedErrorCode = errorCode
-        .replace(/-/g, ' ') // Replacing hyphens with spaces
-        .replace(/(^|\s)\S/g, (match) => match.toUpperCase()); // Capitalizing the first letter
-    if(formattedErrorCode === "Invalid Phone Number"){
-      setCountdown(0)
-    }
-      return formattedErrorCode;
-    }
-    else{
-      return "Error sending OTP"
-    }
-    }
-    else{
-      return "Error sending OTP"
-    }
-  }
 
   const handleSendCode = () => {
     if(!phoneNumber || phoneNumber === ""){
@@ -150,7 +87,7 @@ const Login = () => {
         })
         .catch((error) => {
           console.error('Error sending verification code:', error);
-          const formattedErrorCode = formatFirebaseErrorCode(error);
+          const formattedErrorCode = formatFirebaseErrorCode(error, setCountdown);
           toast.error(formattedErrorCode);
         });
     }
@@ -176,7 +113,7 @@ const Login = () => {
           })
           .catch((error) => {
             console.error('Error resending verification code:', error);
-            const formattedErrorCode = formatFirebaseErrorCode(error);
+            const formattedErrorCode = formatFirebaseErrorCode(error, setCountdown);
             toast.error(formattedErrorCode);
           });
       }
@@ -184,26 +121,7 @@ const Login = () => {
     
   };
 
-  const createDoc = async (user) => {
-    const docRef = doc(db, 'users', user.uid);
-    const documentSnapshot = await getDoc(docRef);
   
-    if (documentSnapshot.exists()) {
-      try {
-        await setDoc(docRef, { lastLoggedOn: serverTimestamp() }, { merge: true });
-        console.log('Document updated successfully!');
-      } catch (error) {
-        console.error('Error updating document:', error);
-      }
-    } else {
-      try {
-        await setDoc(docRef,{ uid : user.uid, name: user.displayName, phoneNumber: user.phoneNumber, createdOn: serverTimestamp(), lastLoggedOn: serverTimestamp(), email: user.email });
-        console.log('Document created successfully!');
-      } catch (error) {
-        console.error('Error creating document:', error);
-      }
-    }
-  }
   const handleVerifyCode = async () => {
     const credential = PhoneAuthProvider.credential(verificationId, verificationCode);
 
@@ -231,6 +149,7 @@ const Login = () => {
       });
       
   };
+  
   const handleClose = () => {
     setOpen(false);
   };
@@ -269,98 +188,75 @@ const Login = () => {
   }
   return (
     <>
-    <div className={classes.root}>
-    <Card className={classes.card}>
-      <h1 style={{fontSize: "48px", color: "#222624"}}>Login</h1>
-      <GoogleSignInButton handleGoogleLogin={handleGoogleLogin}/>
-      <div>
-        <h1>Phone Authentication</h1>
-        <div>
-      <Box className={classes.container}>
-       
-      
-<div className="container">
-  <div className="phone-input-container">
-    <PhoneInput
-      placeholder="Phone number"
-      value={phoneNumber}
-      onChange={handlePhoneNumberChange}
-      defaultCountry="IN"
-      className="custom-phone-input"
-    />
-  </div>
-  <div className="button-container">
-    {sendButtonVisible && (
-      <Button variant="contained" onClick={handleSendCode} >
-        Send Code
-      </Button>
-    )}
-    {resendButtonVisible && (
-      <Button
-        variant="contained"
-        onClick={handleResendCode}
-        disabled={countdown > 0}
-        
-      >
-        {countdown > 0 ? `Resend Code (${countdown})` : 'Resend Code'}
-      </Button>
-    )}
-  </div>
-</div>
-
-      </Box>
-      <Box className={`${classes.container} custom-container`}>
-  <OTPInput
-    value={verificationCode}
-    onChange={setVerificationCode}
-    autoFocus
-    OTPLength={6}
-    otpType="number"
-    disabled={false}
-  />
-  <Button variant="contained" onClick={handleVerifyCode}>
-    Verify Code
-  </Button>
-
-</Box>
-
-    </div>
-        
+      <div className={classes.root}>
+        <Card className={classes.card}>
+          <h1 style={{ fontSize: "48px", color: "#222624" }}>Login</h1>
+          <GoogleSignInButton handleGoogleLogin={handleGoogleLogin} />
+          <div>
+            <h1>Phone Authentication</h1>
+            <div>
+              <Box className={classes.container}>
+                <div className="container">
+                  <div className="phone-input-container">
+                    <PhoneInput
+                      placeholder="Phone number"
+                      value={phoneNumber}
+                      onChange={handlePhoneNumberChange}
+                      defaultCountry="IN"
+                      className="custom-phone-input"
+                    />
+                  </div>
+                  <div className="button-container">
+                    {sendButtonVisible && (
+                      <Button variant="contained" onClick={handleSendCode}>
+                        Send Code
+                      </Button>
+                    )}
+                    {resendButtonVisible && (
+                      <Button
+                        variant="contained"
+                        onClick={handleResendCode}
+                        disabled={countdown > 0}
+                      >
+                        {countdown > 0
+                          ? `Resend Code (${countdown})`
+                          : "Resend Code"}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </Box>
+              <Box className={`${classes.container} custom-container`}>
+                <OTPInput
+                  value={verificationCode}
+                  onChange={setVerificationCode}
+                  autoFocus
+                  OTPLength={6}
+                  otpType="number"
+                  disabled={false}
+                />
+                <Button variant="contained" onClick={handleVerifyCode}>
+                  Verify Code
+                </Button>
+              </Box>
+            </div>
+          </div>
+        </Card>
+        <ProfileDialog
+        open={open}
+        handleClose={handleClose}
+        name={name}
+        setName={setName}
+        email={email}
+        setEmail={setEmail}
+        handleSubmit={handleSubmit}
+        validateEmail={validateEmail}
+      />
       </div>
-    </Card>
-    <Dialog open={open} onClose={handleClose} classes={{ paper: classes.dialog }}>
-        <DialogTitle>Enter Name and Email</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Name"
-            type="text"
-            fullWidth
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <TextField
-          margin="dense"
-          label="Email"
-          type="email"
-          fullWidth
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          error={!validateEmail(email)}
-          helperText={!validateEmail(email) ? 'Please enter a valid email' : ''}
-        />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleSubmit} color="primary">
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
-  </div>
-  <div id="recaptcha-container"></div>
-  </>
+      <div id="recaptcha-container"></div>
+    </>
   );
+  
 };
 
 export default Login;
