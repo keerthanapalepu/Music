@@ -23,7 +23,7 @@ function SongsTable({ allSongsArray, handleController, type = "NotDownloads" }) 
         const newAudio = new Audio(song.url);
         newAudio.play();
         newAudio.addEventListener('timeupdate', () => {
-          if (newAudio.currentTime > 15) {
+          if (type === "NotDownloads" && newAudio.currentTime > 15) {
             newAudio.pause();
             setCurrentSong(null);
           }
