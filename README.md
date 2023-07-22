@@ -6,11 +6,7 @@ This Music App React project is a platform designed to connect users with studen
 
 - [Getting Started](#getting-started)
 - [Features](#features)
-- [Previewing Songs](#previewing-songs)
-- [Adding to Wishlist](#adding-to-wishlist)
-- [Adding to Cart](#adding-to-cart)
 - [Contributing](#contributing)
-- [License](#license)
 
 
 
