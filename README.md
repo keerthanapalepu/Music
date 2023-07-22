@@ -32,7 +32,7 @@ git clone https://github.com/keerthanapalepu/Music.git
 2. Navigate to the project directory:
 
 ```
-cd music-app-react
+cd Music
 ```
 
 3. Install the required dependencies:
