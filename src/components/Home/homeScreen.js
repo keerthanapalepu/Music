@@ -8,6 +8,7 @@ import SongsList from './songsList';
 import { useUserSongs } from "../../context/songsContext";
 import { getMediaUrl, fetchSongData } from "../helperFunctions";
 import useStyles from './homeStyles';
+import WhiteCircularProgress from '../HelperWidget/circularProgress';
 
 const HomeScreen = () => {
   const classes = useStyles();
@@ -18,12 +19,12 @@ const HomeScreen = () => {
   const [allSongsArray, setAllSongsArray] = useState([]);
 
   const handleNext = () => {
-    getSongs();
+    getSongsAlbum();
   };
 
-  const getSongs = async () => {
+  const getSongsAlbum = async () => {
     const collectionRef = collection(db, 'albums');
-    let firestoreQuery = query(collectionRef, orderBy('createdOn'), limit(8));
+    let firestoreQuery = query(collectionRef, orderBy('createdOn', 'desc'), limit(8));
 
     if (lastCreatedOn) {
       firestoreQuery = query(firestoreQuery, startAfter(lastCreatedOn));
@@ -42,7 +43,7 @@ const HomeScreen = () => {
       newDocs.sort((a, b) => {
         const numA = parseInt(a.type.split('_')[1]);
         const numB = parseInt(b.type.split('_')[1]);
-        return numA - numB;
+        return numB - numA;
       });
       setWeekSongsArray((prevDocs) => [...prevDocs, ...newDocs]);
       console.log(newDocs)
@@ -53,7 +54,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     async function fetchData() {
-      getSongs();
+      getSongsAlbum();
     }
     fetchData();
   }, []);
@@ -71,7 +72,9 @@ const HomeScreen = () => {
   }, [selectedCard]);
 
   return (
-    <Grid container style={{ height: '85vh' }}>
+    <>
+   {weekSongsArray.length === 0? (<WhiteCircularProgress />) :
+    (<Grid container style={{ height: '85vh' }}>
       <div style={{ overflowX: 'auto', width: '100%' }}>
         <div style={{ display: 'flex', flexWrap: 'nowrap', alignItems: 'flex-start' }}>
           {weekSongsArray.map((item, index) => (
@@ -89,13 +92,14 @@ const HomeScreen = () => {
         </div>
       </div>
 
-      <Grid container item style={{ height: '75%'}}>
+      <Grid container item style={{ height: '72%'}}>
         <SongsList songs={allSongsArray} setAllSongsArray={setAllSongsArray} day={weekSongsArray[selectedCard]?.type} />
       </Grid>
 
       <div>
       </div>
-    </Grid>
+    </Grid>)}
+    </>
   );
 };
 

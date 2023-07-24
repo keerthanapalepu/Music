@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Typography } from '@mui/material';
 import { db, httpsCallable, functions } from '../../services/firebase';
-import { doc, getDoc} from '@firebase/firestore'
+import { doc, getDoc, addDoc, collection, serverTimestamp} from '@firebase/firestore'
 import { useAuth } from "../../context/authContext";
 import { useUserSongs } from "../../context/songsContext";
-import {fetchSongData, handleCurrentUserSongs } from "../helperFunctions";
+import {fetchSongData, handleCurrentUserSongs, toastNotification } from "../helperFunctions";
 import SongsTable from "../HelperWidget/Table"
 
 function Cart({setActiveButton}) {
@@ -29,6 +29,7 @@ function Cart({setActiveButton}) {
     } else {
       updatedSongs.splice(index, 1);
     }
+    toastNotification(!boolType, type);
     setAllSongsArray([...updatedSongs]);
     const docRef = doc(db, 'songs', songId);
     const documentSnapshot = await getDoc(docRef);
@@ -54,18 +55,10 @@ function Cart({setActiveButton}) {
 			handler: async (response) => {
         const verifyPayment = httpsCallable(functions, 'paymentVerification');
         verifyPayment(response)
-        .then(async (response) => {
+        .then(async () => {
           setAllSongsArray([])
+          console.log(response)
           await Promise.all(allSongsArray.map(async (item) => {
-              await handleCurrentUserSongs(
-                true,
-                item.id,
-                "Cart",
-                currentUser.uid,
-                "",
-                setUserCartSongs,
-                userCartSongs
-              );
               const docRef = doc(db, 'songs', item.id);
               const documentSnapshot = await getDoc(docRef);
               await handleCurrentUserSongs(
@@ -78,8 +71,34 @@ function Cart({setActiveButton}) {
                 userDownloadSongs
               );
           }))
-          setActiveButton("Downloads")
-         
+          setActiveButton("Downloads");
+          await Promise.all(allSongsArray.map(async (item) => {
+            await handleCurrentUserSongs(
+              true,
+              item.id,
+              "Cart",
+              currentUser.uid,
+              "",
+              setUserCartSongs,
+              userCartSongs
+            );
+            const ordersCollectionRef = collection(db, 'orders');
+            const orderData = {
+              orderId: response.razorpay_order_id,
+              paymentId: response.razorpay_payment_id,
+              userId: currentUser.uid,
+              songId: item.id,
+              purchasedOn: serverTimestamp()
+            };
+            try {
+              const docRef = await addDoc(ordersCollectionRef, orderData);
+              console.log('Document written with ID: ', docRef.id);
+            } catch (error) {
+              console.error('Error adding document: ', error);
+            }
+        }))
+          
+          
         })
         .catch(error => {
           console.error('Error:', error);
@@ -105,10 +124,11 @@ function Cart({setActiveButton}) {
 	};
 
   return (
-<div style={{  height: '88%' , margin: '20px',borderRadius: "8px", backgroundColor: "#A7A7A7"}}>
+  <div style={{  height: '88%' , margin: '20px',borderRadius: "8px", backgroundColor: "#A7A7A7"}}>
     <SongsTable
         allSongsArray={allSongsArray}
         handleController={handleController}
+        type={"Cart"}
       />
      <div style={{display:'flex', justifyContent: "space-around", alignItems: "center", padding: "20px"}}>
      <Typography variant="h6">Total Amount: {allSongsArray.length * 50} /- </Typography>

@@ -1,13 +1,36 @@
 import React, {useState, useEffect} from 'react';
-import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
+import { Table, TableHead, TableBody, TableRow, TableCell , Typography} from '@mui/material';
 import SongTableRow from './songRow';
 
-function SongsTable({ allSongsArray, handleController, type = "NotDownloads" }) {
+const textStyles = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  height: '50vh',
+  width: '600px',
+  marginLeft: '400px',
+};
+function SongsTable({ allSongsArray, handleController, type}) {
     const [currentSong, setCurrentSong] = useState(null);
     const [audio, setAudio] = useState(null);
+    const [empty, setEmpty] = useState(false);
+
+    useEffect(() => {
+      const delayedFunction = () => {
+        if(allSongsArray.length === 0){
+          setEmpty(true);
+        }
+      };
+
+      const timer = setTimeout(delayedFunction, 1000);
+      return () => clearTimeout(timer);
+    }, []);
 
     useEffect(() => {
         setCurrentSong(null);
+        if(allSongsArray.length !== 0){
+          setEmpty(false);
+        }
         return () => {
             if (audio) {
               audio.pause();
@@ -23,7 +46,7 @@ function SongsTable({ allSongsArray, handleController, type = "NotDownloads" }) 
         const newAudio = new Audio(song.url);
         newAudio.play();
         newAudio.addEventListener('timeupdate', () => {
-          if (type === "NotDownloads" && newAudio.currentTime > 15) {
+          if (type !== "Download" && newAudio.currentTime > 15) {
             newAudio.pause();
             setCurrentSong(null);
           }
@@ -85,8 +108,13 @@ function SongsTable({ allSongsArray, handleController, type = "NotDownloads" }) 
             {type === "Download" &&<TableCell>Download</TableCell>}
           </TableRow>
         </TableHead>
-        <TableBody>
-          {allSongsArray.length > 0 && (
+        {empty && allSongsArray.length === 0? (
+          <Typography variant="h5" component="h5" style={textStyles}>
+              {type === "Home" ? "Select from above cards" : `No song avaliable in ${type} section`}
+            </Typography>
+          ) : (
+          <TableBody>
+          {allSongsArray.length !== 0 &&
             allSongsArray.map((song, index) => (
               <SongTableRow
                 handleDownload={handleDownload}
@@ -99,9 +127,9 @@ function SongsTable({ allSongsArray, handleController, type = "NotDownloads" }) 
                 handlePause={handlePause}
                 handleController={handleController}
               />
-            ))
-          )}
+            ))}
         </TableBody>
+          )}
       </Table>
     </div>
   );

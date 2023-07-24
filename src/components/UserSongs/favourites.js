@@ -3,7 +3,7 @@ import { db } from '../../services/firebase';
 import { doc, getDoc} from '@firebase/firestore'
 import { useAuth } from "../../context/authContext";
 import { useUserSongs } from "../../context/songsContext";
-import {fetchSongData, handleCurrentUserSongs } from "../helperFunctions";
+import {fetchSongData, handleCurrentUserSongs, toastNotification } from "../helperFunctions";
 import SongsTable from "../HelperWidget/Table"
 
 function Favourite() {
@@ -29,6 +29,7 @@ function Favourite() {
     } else {
       updatedSongs[index].cart = !boolType;
     }
+    toastNotification(!boolType, type);
     setAllSongsArray([...updatedSongs]);
     const docRef = doc(db, 'songs', songId);
     const documentSnapshot = await getDoc(docRef);
@@ -47,6 +48,7 @@ function Favourite() {
   <SongsTable
     allSongsArray={allSongsArray}
     handleController={handleController}
+    type={"Favourite"}
   />
   );
 }

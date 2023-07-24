@@ -1,6 +1,8 @@
 import { db, storage } from '../services/firebase';
 import { getDownloadURL, ref} from "firebase/storage";
 import {collection, query, serverTimestamp,  deleteDoc, getDocs, doc, getDoc, setDoc} from '@firebase/firestore'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const createDoc = async (user) => {
   const docRef = doc(db, 'users', user.uid);
@@ -107,3 +109,16 @@ export const getCurrentUserSongs = async (uid, type) => {
       }
   }
 
+export const toastNotification = (boolType, type) => {
+  if(boolType){
+    toast.success(`Added to ${type}`, {
+      autoClose: 800, 
+    });
+  }
+  else {
+    toast(`❌ Removed from ${type}`, {
+      autoClose: 800, 
+    });
+  }
+  
+}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../../context/authContext";
 import { useUserSongs } from "../../context/songsContext";
-import { handleCurrentUserSongs } from "../helperFunctions";
+import { handleCurrentUserSongs, toastNotification } from "../helperFunctions";
 import SongsTable from "../HelperWidget/Table"
 const SongTable = ({ songs, day, setAllSongsArray }) => {
   const { currentUser } = useAuth();
@@ -19,6 +19,7 @@ const SongTable = ({ songs, day, setAllSongsArray }) => {
     } else {
       updatedSongs[index].cart = !boolType;
     }
+    toastNotification(!boolType, type);
     setSongsList([...updatedSongs]);
     setAllSongsArray([...updatedSongs]);
     await handleCurrentUserSongs(
@@ -36,6 +37,7 @@ const SongTable = ({ songs, day, setAllSongsArray }) => {
     <SongsTable
     allSongsArray={songsList}
     handleController={handleController}
+    type={"Home"}
   />
   );
 };
