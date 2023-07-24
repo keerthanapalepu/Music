@@ -35,19 +35,25 @@ git clone https://github.com/keerthanapalepu/Music.git
 cd Music
 ```
 
-3. Install the required dependencies:
+4. Switch branch to college_music:
+
+```
+git switch college_music
+```
+
+4. Install the required dependencies:
 
 ```
 npm install
 ```
 
-4. Run the development server:
+5. Run the development server:
 
 ```
 npm start
 ```
 
-5. Open your web browser and visit [http://localhost:3000](http://localhost:3000) to access the Music App.
+6. Open your web browser and visit [http://localhost:3000](http://localhost:3000) to access the Music App.
 
 ## Features
 
