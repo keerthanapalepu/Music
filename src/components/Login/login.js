@@ -189,7 +189,7 @@ const Login = () => {
   return (
     <>
       <div className={classes.root}>
-        <Card className={classes.card}>
+        <Card className={`${classes.card} mobileCard`}>
           <h1 style={{ fontSize: "48px", color: "#222624" }}>Login</h1>
           <GoogleSignInButton handleGoogleLogin={handleGoogleLogin} />
           <div>

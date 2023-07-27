@@ -101,7 +101,7 @@ function SongsTable({ allSongsArray, handleController, type}) {
             <TableCell>Serial No.</TableCell>
             <TableCell>Song Name</TableCell>
             <TableCell>Artist</TableCell>
-            <TableCell>Duration</TableCell>
+            {/* <TableCell>Duration</TableCell> */}
             <TableCell>Play</TableCell>
             {type !== "Download" && <TableCell>Favourite</TableCell>}
             {type !== "Download" &&<TableCell>Cart</TableCell>}

@@ -4,7 +4,8 @@ import {  ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
 import {HiShoppingCart} from "react-icons/hi";
 import {MdLogout} from "react-icons/md";
-import {AiOutlineDownload} from "react-icons/ai";
+import {AiOutlineDownload, AiFillHeart} from "react-icons/ai";
+import { useMediaQuery } from 'react-responsive';
 
 import HomeScreen from './homeScreen';
 import Download from '../UserSongs/downloads';
@@ -47,16 +48,17 @@ function HomePage() {
   const handleButtonClick = (buttonName) => {
     setActiveButton(buttonName);
   };
+  const isMobileDevice = useMediaQuery({ maxWidth: 600 });
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
         <Grid container className={classes.gridContainer}>
-          <Grid item xs={2} md={2} className={classes.gridItem} style={{ backgroundColor: '#42779A' }}>
+          {!isMobileDevice  && (<Grid item xs={2} md={2} className={classes.gridItem} style={{ backgroundColor: '#42779A' }}>
             <Card className={classes.card}>
             <SideBar handleButtonClick={handleButtonClick} />
             </Card>
-          </Grid>
-          <Grid item xs={10} md={10} className={classes.gridItem} style={{ backgroundColor: '#a5a492' }}>
+          </Grid>)}
+          <Grid item xs={isMobileDevice ? 12 : 10} md={10} className={classes.gridItem} style={{ backgroundColor: '#a5a492' }}>
             <Card className={classes.card}>
             <div style={{ display: 'flex', maxHeight: "45px" , justifyContent: 'space-between', alignItems: 'center' }}>
                 <h1 style={{ padding : "30px" }}>{activeButton}</h1>
@@ -66,6 +68,9 @@ function HomePage() {
                   </IconButton>
                   <IconButton className={classes.iconButton} onClick={() => {setActiveButton("Downloads")}}>
                     <AiOutlineDownload />
+                  </IconButton>
+                  <IconButton className={classes.iconButton} onClick={() => {setActiveButton("Favourite")}}>
+                    <AiFillHeart />
                   </IconButton>
                   <IconButton className={classes.iconButton} onClick={() => setOpen(true)}>
                     <MdLogout />

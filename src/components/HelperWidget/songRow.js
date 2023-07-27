@@ -23,7 +23,7 @@ const SongTableRow = ({ handleDownload, type, song, index, currentSong, handlePl
       <TableCell>{index + 1}</TableCell>
       <TableCell>{song.name}</TableCell>
       <TableCell>{song.singer}</TableCell>
-      <TableCell>{song.duration}</TableCell>
+      {/* <TableCell>{song.duration}</TableCell> */}
       <TableCell>
         {currentSong === index ? (
           <IconButton onClick={handlePause}>
