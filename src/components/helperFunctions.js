@@ -60,13 +60,14 @@ export const getCurrentUserSongs = async (uid, type) => {
     return songsData;
   }
   
-  export const fetchSongData = async (songsArray, userFavSongs = [], userCartSongs = [] ) => {
+  export const fetchSongData = async (songsArray, userFavSongs = [], userCartSongs = [], preview = false ) => {
+    const language = localStorage.getItem('selectedLanguage');
     const newDocs = await Promise.all(songsArray.map(async (item) => {
      const docRef = doc(db, 'songs', item);
      const documentSnapshot = await getDoc(docRef);
      if (documentSnapshot.exists()) {
        const data = documentSnapshot.data();
-       let songUrl = await getMediaUrl(`/music/${data.day}/${documentSnapshot.id}.mp3`);
+       let songUrl = preview? await getMediaUrl(`/music/${data.day}/${documentSnapshot.id}_preview_${language}.mp3`) : await getMediaUrl(`/music/${data.day}/${documentSnapshot.id}_${language}.mp3`);
          let Fav = false;
          if(userFavSongs.length > 0){
             Fav = userFavSongs.some(obj => obj.uid === item);

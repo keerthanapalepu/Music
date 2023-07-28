@@ -38,15 +38,25 @@ const theme = createTheme({
 
 function HomePage() {
   const classes = useStyles();
-  const [activeButton, setActiveButton] = useState('Home');
+  const [activeButton, setActiveButton] = useState(localStorage.getItem('activeButton')? localStorage.getItem('activeButton')  : 'Home' );
   const [open, setOpen] = useState(false);
+  const [openLanguage, setOpenLanguage] = useState(false);
+  const language = localStorage.getItem('selectedLanguage');
   const handleLogoutConfirm = () => {
     auth.signOut();
     setOpen(false);
   };
 
+  const handleConfirm = () => {
+    const music = language === "telugu"? "hindi" : "telugu"
+    localStorage.setItem('selectedLanguage', music);
+    setOpenLanguage(false)
+    window.location.reload();
+  };
+
   const handleButtonClick = (buttonName) => {
     setActiveButton(buttonName);
+    localStorage.setItem('activeButton', buttonName);
   };
   const isMobileDevice = useMediaQuery({ maxWidth: 600 });
   return (
@@ -61,15 +71,18 @@ function HomePage() {
           <Grid item xs={isMobileDevice ? 12 : 10} md={10} className={classes.gridItem} style={{ backgroundColor: '#a5a492' }}>
             <Card className={classes.card}>
             <div style={{ display: 'flex', maxHeight: "45px" , justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1 style={{ padding : "30px" }}>{activeButton}</h1>
+                <h1 style={{ padding : "30px", textTransform: 'uppercase' }}>{`${activeButton} - ${language} Songs`}</h1>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <IconButton className={classes.iconButton} onClick={() => {setActiveButton("Cart")}}>
+                <IconButton className={classes.iconButton} onClick={() => {setOpenLanguage(true)}}>
+                {language === "telugu"? "हिन्दी Music" : "తెలుగు Music"}
+                  </IconButton>
+                  <IconButton className={classes.iconButton} onClick={() => {setActiveButton("Cart"); localStorage.setItem('activeButton', "Cart");}}>
                     <HiShoppingCart />
                   </IconButton>
-                  <IconButton className={classes.iconButton} onClick={() => {setActiveButton("Downloads")}}>
+                  <IconButton className={classes.iconButton} onClick={() => {setActiveButton("Downloads"); localStorage.setItem('activeButton', "Downloads");}}>
                     <AiOutlineDownload />
                   </IconButton>
-                  <IconButton className={classes.iconButton} onClick={() => {setActiveButton("Favourite")}}>
+                  <IconButton className={classes.iconButton} onClick={() => {setActiveButton("Favourite"); localStorage.setItem('activeButton', "Favourite  ");}}>
                     <AiFillHeart />
                   </IconButton>
                   <IconButton className={classes.iconButton} onClick={() => setOpen(true)}>
@@ -85,6 +98,7 @@ function HomePage() {
           </Grid>
         </Grid>
         <DialogBox open={open} setOpen={setOpen} title={"Confirm LogOut"} text={"Are you sure you want to logout?"} onConfirm={handleLogoutConfirm} />
+        <DialogBox open={openLanguage} setOpen={setOpenLanguage} title={"Confirm Language"} text={`Are you sure you want to Change Language to ${language === "telugu"? "हिन्दी " : "తెలుగు "}?`} onConfirm={handleConfirm} />
       </div>
     </ThemeProvider>
   );

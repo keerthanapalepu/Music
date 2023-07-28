@@ -24,6 +24,7 @@ import { db } from '../../services/firebase';
 import ProfileDialog from "./dialog";
 import {formatFirebaseErrorCode} from "./loginHelper";
 import {createDoc} from "../helperFunctions";
+import IntroSongs from './introSong';
 const Login = () => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -123,31 +124,36 @@ const Login = () => {
 
   
   const handleVerifyCode = async () => {
-    const credential = PhoneAuthProvider.credential(verificationId, verificationCode);
+    if(!localStorage.getItem('selectedLanguage')) {
+      toast.error("Select your prefered language")
+    }
+    else{
+      const credential = PhoneAuthProvider.credential(verificationId, verificationCode);
 
-    signInWithCredential(auth, credential)
-      .then(async (result) => {
-        console.log('Phone authentication successful:', result.user);
-        toast.success('Login Successful!');
-        await createDoc(result.user);
-        
-        const docRef = doc(db, 'users', result.user.uid);
-        const documentSnapshot = await getDoc(docRef);
-        console.log(documentSnapshot.data())
-        if(!documentSnapshot.data().name  || !documentSnapshot.data().email ){
-          setName(documentSnapshot.data()? documentSnapshot.data().name : "");
-          setEmail(documentSnapshot.data()? documentSnapshot.data().email : "");
-          setOpen(true);
-        }
-        else{
-          navigate(location.state?.from || '/');
-        }
-      })
-      .catch((error) => {
-        console.error('Error verifying verification code:', error);
-        toast.error("Invalid OTP")
-      });
-      
+      signInWithCredential(auth, credential)
+        .then(async (result) => {
+          console.log('Phone authentication successful:', result.user);
+          toast.success('Login Successful!');
+          await createDoc(result.user);
+          
+          const docRef = doc(db, 'users', result.user.uid);
+          const documentSnapshot = await getDoc(docRef);
+          console.log(documentSnapshot.data())
+          if(!documentSnapshot.data().name  || !documentSnapshot.data().email ){
+            setName(documentSnapshot.data()? documentSnapshot.data().name : "");
+            setEmail(documentSnapshot.data()? documentSnapshot.data().email : "");
+            setOpen(true);
+          }
+          else{
+    
+            navigate(location.state?.from || '/');
+          }
+        })
+        .catch((error) => {
+          console.error('Error verifying verification code:', error);
+          toast.error("Invalid OTP")
+        });
+    }
   };
 
   const handleClose = () => {
@@ -155,24 +161,30 @@ const Login = () => {
   };
 
   const handleGoogleLogin = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider)
-        .then(async (result) => {
-          const user = result.user;
-          toast.success('Login Successful!');
-          console.log(user.uid)
-          createDoc(user)
-          navigate(location.state?.from || '/');
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          const email = error.email;
-          console.log(errorCode, errorMessage, email);
-        });
-    } catch (error) {
-      console.log(error);
+    if(!localStorage.getItem('selectedLanguage')) {
+      toast.error("Select your prefered language")
+    }
+    else{
+      try {
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider)
+          .then(async (result) => {
+            const user = result.user;
+            toast.success('Login Successful!');
+            console.log(user.uid)
+            createDoc(user)
+    
+            navigate(location.state?.from || '/');
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            const email = error.email;
+            console.log(errorCode, errorMessage, email);
+          });
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -190,6 +202,9 @@ const Login = () => {
     <>
       <div className={classes.root}>
         <Card className={`${classes.card} mobileCard`}>
+        <div style={{display: "flex", justifyContent : "space-evenly", alignItems : "center", paddingTop: "20px"}}>
+         <IntroSongs />
+          </div>
           <h1 style={{ fontSize: "48px", color: "#222624" }}>Login</h1>
           <GoogleSignInButton handleGoogleLogin={handleGoogleLogin} />
           <div>

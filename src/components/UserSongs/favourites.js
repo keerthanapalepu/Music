@@ -14,7 +14,7 @@ function Favourite() {
   useEffect(() => {
     async function fetchData() {
       const songsArray =  userFavSongs.map((obj) => obj.uid);
-      const newDocs = await fetchSongData(songsArray, userFavSongs, userCartSongs);
+      const newDocs = await fetchSongData(songsArray, userFavSongs, userCartSongs, true);
        setAllSongsArray((prevDocs) => [...prevDocs, ...newDocs]);
     }
     fetchData();
