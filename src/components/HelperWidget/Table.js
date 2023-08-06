@@ -45,12 +45,12 @@ function SongsTable({ allSongsArray, handleController, type}) {
         }
         const newAudio = new Audio(song.url);
         newAudio.play();
-        newAudio.addEventListener('timeupdate', () => {
-          if (type !== "Download" && newAudio.currentTime > 15) {
-            newAudio.pause();
-            setCurrentSong(null);
-          }
-        });
+        // newAudio.addEventListener('timeupdate', () => {
+        //   if (type !== "Download" && newAudio.currentTime > 15) {
+        //     newAudio.pause();
+        //     setCurrentSong(null);
+        //   }
+        // });
         setAudio(newAudio);
         setCurrentSong(index);
       };
@@ -64,6 +64,7 @@ function SongsTable({ allSongsArray, handleController, type}) {
 
       const handleDownload = async (url, name) => {
         try {
+          console.log("hello")
           const response = await fetch(url);
           const blob = await response.blob();
           const urlObject = URL.createObjectURL(blob);
@@ -119,7 +120,7 @@ function SongsTable({ allSongsArray, handleController, type}) {
               <SongTableRow
                 handleDownload={handleDownload}
                 type={type}
-                key={song.name}
+                key={index}
                 song={song}
                 index={index}
                 currentSong={currentSong}

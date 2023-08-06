@@ -77,7 +77,7 @@ export const getCurrentUserSongs = async (uid, type) => {
             Cart = userCartSongs.some(obj => obj.uid === item);
          }
          
-       return {name: data.name, singer: data.artist, url: songUrl, duration: '3:14', fav: Fav, cart: Cart, id: item};
+       return {hindiName: data.hindiName, teluguName : data.teluguName,  singer: data.artist, url: songUrl, duration: '3:14', fav: Fav, cart: Cart, id: item};
      }
     }))
     return newDocs;

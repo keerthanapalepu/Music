@@ -16,12 +16,12 @@ const SongTableRow = ({ handleDownload, type, song, index, currentSong, handlePl
       handleController(cart, index, id, type);
     }
   }
-  
+  const language = localStorage.getItem('selectedLanguage');
   return (
     <>
       <TableRow key={song.name} hover style={{ height: '50px' }}>
       <TableCell>{index + 1}</TableCell>
-      <TableCell>{song.name}</TableCell>
+      <TableCell>{language === "telugu"? song.teluguName : song.hindiName}</TableCell>
       <TableCell>{song.singer}</TableCell>
       {/* <TableCell>{song.duration}</TableCell> */}
       <TableCell>
@@ -58,7 +58,7 @@ const SongTableRow = ({ handleDownload, type, song, index, currentSong, handlePl
         )}
       </TableCell>}
       {type === "Download" && <TableCell>
-        <IconButton onClick={() => handleDownload(song.url, song.name)}>
+        <IconButton onClick={() => handleDownload(song.url, language === "telugu"? song.teluguName : song.hindiName)}>
           <AiOutlineDownload />
         </IconButton>
     </TableCell>}

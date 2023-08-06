@@ -4,7 +4,7 @@ import useStyles from './homeStyles';
 
 const CardItem = ({ item, onClick }) => {
   const classes = useStyles();
-
+  const language = localStorage.getItem('selectedLanguage');
   return (
     <Card className={classes.card} onClick={onClick}>
       <CardContent className={classes.cardContent}>
@@ -12,7 +12,7 @@ const CardItem = ({ item, onClick }) => {
           <img src={item.url} className={classes.image} alt={item.name} />
           <Typography className={classes.title}>{item.day}</Typography>
           <Typography className={classes.theme}>
-            {item.theme}
+            {/* {language === "telugu"?  item.teluguTheme : item.hindiTheme} */}
           </Typography>
         </div>
       </CardContent>

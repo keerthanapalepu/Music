@@ -20,6 +20,7 @@ const IntroSongs = () => {
       setTeluguUrl(teluguMediaUrl);
       setHindiUrl(hindiMediaUrl);
       setLoading(false);
+      
     };
     getSongUrl();
 
@@ -61,20 +62,21 @@ const IntroSongs = () => {
       ) : (
         Languages.map((language, index) => (
           <div key={index} style={{ display: 'inline', paddingLeft: '30px' }}>
+          <h2 style={{  color: "white" }}>{language === 'telugu' ? "శ్రీ సాయి సచ్చరిత్ర పాట రూపం లో" : "श्री साई सत्चरित्र,गीत रूप में"}</h2> 
             <Button
               variant="contained"
               onClick={() => {localStorage.setItem('selectedLanguage', language); setSongLanguage(language) }}
-              style={{ backgroundColor: songLanguage === language ? 'pink' : '' }}
+              style={{ backgroundColor: songLanguage === language ? 'white' : 'grey' }}
             >
               {language}
             </Button>
             {currentSong === language ? (
               <IconButton onClick={handlePause}>
-                <BsPauseCircleFill />
+                <BsPauseCircleFill style={{ color: 'white' }} />
               </IconButton>
             ) : (
               <IconButton onClick={() => handlePlay(language === 'telugu' ? teluguUrl : hindiUrl, language)}>
-                <BsPlayCircleFill />
+                <BsPlayCircleFill style={{ color: 'white' }} />
               </IconButton>
             )}
           </div>

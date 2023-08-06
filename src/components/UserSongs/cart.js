@@ -6,10 +6,11 @@ import { useAuth } from "../../context/authContext";
 import { useUserSongs } from "../../context/songsContext";
 import {fetchSongData, handleCurrentUserSongs, toastNotification } from "../helperFunctions";
 import SongsTable from "../HelperWidget/Table"
-
+import WhiteCircularProgress from '../HelperWidget/circularProgress';
 function Cart({setActiveButton}) {
   const { userCartSongs, userFavSongs, setUserFavSongs, setUserCartSongs, setUserDownloadSongs, userDownloadSongs } = useUserSongs();
   const [allSongsArray, setAllSongsArray] = useState([]);
+  const [loader, setLoader] = useState(false); 
   const { currentUser } = useAuth();
 
   
@@ -58,6 +59,7 @@ function Cart({setActiveButton}) {
         .then(async () => {
           setAllSongsArray([])
           console.log(response)
+          setLoader(true);
           await Promise.all(allSongsArray.map(async (item) => {
               const docRef = doc(db, 'songs', item.id);
               const documentSnapshot = await getDoc(docRef);
@@ -72,6 +74,7 @@ function Cart({setActiveButton}) {
               );
           }))
           setActiveButton("Downloads");
+          setLoader(false)
           await Promise.all(allSongsArray.map(async (item) => {
             await handleCurrentUserSongs(
               true,
@@ -113,18 +116,25 @@ function Cart({setActiveButton}) {
 	};
 
 	const handlePayment = async () => {
+    setLoader(true)
     const createOrder = httpsCallable(functions, 'createOrder');
     createOrder({amount : allSongsArray.length * 50})
     .then((response) => {
+      setLoader(false);
       initPayment(response.data.data);
     })
     .catch(error => {
+      setLoader(false);
       console.error('Error:', error);
     });
 	};
 
   return (
-  <div style={{  height: '88%' , margin: '20px',borderRadius: "8px", backgroundColor: "#A7A7A7"}}>
+    <>
+      {loader? (
+        <WhiteCircularProgress />
+      ) : (
+        <div style={{  height: '88%' , margin: '20px',borderRadius: "8px", backgroundColor: "#A7A7A7"}}>
     <SongsTable
         allSongsArray={allSongsArray}
         handleController={handleController}
@@ -137,6 +147,9 @@ function Cart({setActiveButton}) {
       </Button>
      </div>
     </div>
+      )}
+    </>
+  
   );
 }
 export default Cart;

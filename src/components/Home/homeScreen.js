@@ -17,7 +17,7 @@ const HomeScreen = () => {
   const [lastCreatedOn, setLastCreatedOn] = useState(null);
   const [selectedCard, setSelectedCard] = useState(null);
   const [allSongsArray, setAllSongsArray] = useState([]);
-
+  const language = localStorage.getItem('selectedLanguage');
   const handleNext = () => {
     getSongsAlbum();
   };
@@ -36,7 +36,8 @@ const HomeScreen = () => {
 
       await Promise.all(querySnapshot.docs.map(async (doc) => {
         let imageUrl = await getMediaUrl(`/music/${doc.data().type}/${doc.data().type}.jpg`);
-        newDocs.push({ id: doc.id, url: imageUrl, day: doc.data().name, type: doc.data().type, theme: doc.data().theme, songs: doc.data().songsRef });
+
+        newDocs.push({ id: doc.id, url: imageUrl, day: doc.data().name, type: doc.data().type, teluguTheme: doc.data().teluguTheme, hindiTheme: doc.data().hindiTheme,  songs: doc.data().songsRef });
         setLastCreatedOn(querySnapshot.docs[querySnapshot.docs.length - 1]);
       }));
 

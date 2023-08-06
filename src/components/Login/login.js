@@ -198,66 +198,75 @@ const Login = () => {
       navigate(location.state?.from || '/');
     }
   }
-  return (
-    <>
-      <div className={classes.root}>
-        <Card className={`${classes.card} mobileCard`}>
-        <div style={{display: "flex", justifyContent : "space-evenly", alignItems : "center", paddingTop: "20px"}}>
-         <IntroSongs />
-          </div>
-          <h1 style={{ fontSize: "48px", color: "#222624" }}>Login</h1>
-          <GoogleSignInButton handleGoogleLogin={handleGoogleLogin} />
+ return (
+  <>
+    <div className={classes.root}>
+      <h1 style={{ fontSize: "40px", marginRight: 'auto', position: "absolute", top: -15, left: 0, paddingLeft: "15px", zIndex: 1 }}>Sri Sai Satcharitra</h1>
+      <Card className={`${classes.card} mobileCard`}>
+        <h1 style={{ fontSize: "48px", color: "white" }}>Login</h1>
+        <GoogleSignInButton handleGoogleLogin={handleGoogleLogin} />
+        <div>
+          <h1 style={{ color: "FFFfff" }}>Login with Phone</h1>
           <div>
-            <h1>Phone Authentication</h1>
-            <div>
-              <Box className={classes.container}>
-                <div className="container">
-                  <div className="phone-input-container">
-                    <PhoneInput
-                      placeholder="Phone number"
-                      value={phoneNumber}
-                      onChange={handlePhoneNumberChange}
-                      defaultCountry="IN"
-                      className="custom-phone-input"
-                    />
-                  </div>
-                  <div className="button-container">
-                    {sendButtonVisible && (
-                      <Button variant="contained" onClick={handleSendCode}>
-                        Send Code
-                      </Button>
-                    )}
-                    {resendButtonVisible && (
-                      <Button
-                        variant="contained"
-                        onClick={handleResendCode}
-                        disabled={countdown > 0}
-                      >
-                        {countdown > 0
-                          ? `Resend Code (${countdown})`
-                          : "Resend Code"}
-                      </Button>
-                    )}
-                  </div>
+            <Box className={classes.container}>
+              <div className="container">
+                <div className="phone-input-container">
+                  <PhoneInput
+                    placeholder="Phone number"
+                    value={phoneNumber}
+                    onChange={handlePhoneNumberChange}
+                    defaultCountry="IN"
+                    className="custom-phone-input"
+                  />
                 </div>
-              </Box>
-              <Box className={`${classes.container} custom-container`}>
-                <OTPInput
-                  value={verificationCode}
-                  onChange={setVerificationCode}
-                  autoFocus
-                  OTPLength={6}
-                  otpType="number"
-                  disabled={false}
-                />
-                <Button variant="contained" onClick={handleVerifyCode}>
-                  Verify Code
-                </Button>
-              </Box>
-            </div>
+                <div className="button-container">
+                  {sendButtonVisible && (
+                    <Button variant="contained" onClick={handleSendCode}>
+                      Send Code
+                    </Button>
+                  )}
+                  {resendButtonVisible && (
+                    <Button
+                      variant="contained"
+                      onClick={handleResendCode}
+                      disabled={countdown > 0}
+                    >
+                      {countdown > 0
+                        ? `Resend Code (${countdown})`
+                        : "Resend Code"}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </Box>
+            <Box className={`${classes.container} custom-container`}>
+              <OTPInput
+                value={verificationCode}
+                onChange={setVerificationCode}
+                autoFocus
+                OTPLength={6}
+                otpType="number"
+                disabled={false}
+              />
+              <Button variant="contained" onClick={handleVerifyCode}>
+                Verify Code
+              </Button>
+            </Box>
           </div>
-        </Card>
-        <ProfileDialog
+        </div>
+      </Card>
+
+      {/* IntroSongs component placed on the right side */}
+      <Card style={{ position: 'absolute', top: 350, right: 250 , backdropFilter: 'blur(10px)', background: 'transparent',
+        padding: "5px",
+      textAlign: 'center'}} className={`mobileCard`} >
+      <div >
+        <IntroSongs />
+      </div>
+
+      </Card>
+
+      <ProfileDialog
         open={open}
         handleClose={handleClose}
         name={name}
@@ -267,10 +276,12 @@ const Login = () => {
         handleSubmit={handleSubmit}
         validateEmail={validateEmail}
       />
-      </div>
-      <div id="recaptcha-container"></div>
-    </>
-  );
+      <h3 style={{ marginLeft: 'auto', position: "absolute", bottom: 0, right: 0, paddingRight: "10px" }}>© By Asmani Music</h3>
+    </div>
+    <div id="recaptcha-container"></div>
+  </>
+);
+
   
 };
 
