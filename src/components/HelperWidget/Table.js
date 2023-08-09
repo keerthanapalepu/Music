@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell , Typography} from '@mui/material';
 import SongTableRow from './songRow';
+import {HiShoppingCart} from "react-icons/hi";
+
 
 const textStyles = {
   display: 'flex',
@@ -101,11 +103,11 @@ function SongsTable({ allSongsArray, handleController, type}) {
           <TableRow>
             <TableCell>Serial No.</TableCell>
             <TableCell>Song Name</TableCell>
-            <TableCell>Artist</TableCell>
+            <TableCell>Singer</TableCell>
             {/* <TableCell>Duration</TableCell> */}
-            <TableCell>Play</TableCell>
+            <TableCell>Preview</TableCell>
             {type !== "Download" && <TableCell>Favourite</TableCell>}
-            {type !== "Download" &&<TableCell>Cart</TableCell>}
+            {type !== "Download" &&<TableCell><HiShoppingCart /></TableCell>}
             {type === "Download" &&<TableCell>Download</TableCell>}
           </TableRow>
         </TableHead>
