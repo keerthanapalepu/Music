@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Grid, IconButton, Card} from '@material-ui/core';
+import {Grid, IconButton, Card, Button} from '@material-ui/core';
 import {  ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
 import {HiShoppingCart} from "react-icons/hi";
@@ -63,19 +63,23 @@ function HomePage() {
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
         <Grid container className={classes.gridContainer}>
-          {!isMobileDevice  && (<Grid item xs={2} md={2} className={classes.gridItem} style={{ backgroundColor: '#42779A' }}>
-            <Card className={classes.card}>
+          {!isMobileDevice  && (<Grid item xs={2} md={2} className={classes.gridItem} style={{ backgroundColor: '#0073B7' }}>
+            {/* <Card className={classes.card}> */}
             <SideBar handleButtonClick={handleButtonClick} />
-            </Card>
+            {/* </Card> */}
           </Grid>)}
-          <Grid item xs={isMobileDevice ? 12 : 10} md={10} className={classes.gridItem} style={{ backgroundColor: '#a5a492' }}>
+          <Grid item xs={isMobileDevice ? 12 : 10} md={10} className={classes.gridItem} style={{ backgroundColor: 'white' }}>
             <Card className={classes.card}>
             <div style={{ display: 'flex', maxHeight: "45px" , justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1 style={{ padding : "30px", textTransform: 'uppercase' }}>{`${activeButton} - ${language} Songs`}</h1>
+                <h1 style={{ padding : "30px", color : "black"  }}>{`${language === "telugu"? "Telugu" : "Hindi"} Sai Satcharitra`}</h1>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton className={classes.iconButton} onClick={() => {setOpenLanguage(true)}}>
-                {language === "telugu"? "हिन्दी Music" : "తెలుగు Music"}
-                  </IconButton>
+                <Button
+                  className={classes.iconButton}
+                  onClick={() => setOpenLanguage(true)}
+                  style={{ color: 'white', backgroundColor: '#0073B7' }}
+                >
+                  {language === 'telugu' ? 'हिन्दी' : 'తెలుగు'}
+                </Button>
                   <IconButton className={classes.iconButton} onClick={() => {setActiveButton("Cart"); localStorage.setItem('activeButton', "Cart");}}>
                     <HiShoppingCart />
                   </IconButton>

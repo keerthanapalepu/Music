@@ -62,7 +62,9 @@ const HomeScreen = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const songsArray = weekSongsArray[selectedCard]?.songs;
+      const songsArray = weekSongsArray[selectedCard]?.songs.map((item) => {
+        return { uid: item}
+      });
       const newDocs = await fetchSongData(songsArray, userFavSongs, userCartSongs, true);
       setAllSongsArray((prevDocs) => [...prevDocs, ...newDocs]);
     }

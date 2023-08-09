@@ -17,7 +17,7 @@ const WhiteCircularProgress = () => {
 
   return (
     <div className={classes.progressContainer}>
-      <CircularProgress style={{color : "white"}} />
+      <CircularProgress style={{color : "black"}} />
     </div>
   );
 };

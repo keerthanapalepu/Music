@@ -29,6 +29,8 @@ const useStyles = makeStyles((theme) => ({
       card: {
         height: 'calc(100% - 20px)',
         width: 'calc(100% - 20px)',
+        background: 'white',
+        boxShadow: 'none'
       },
       divroot: {
         marginTop: '50px',
@@ -38,21 +40,21 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: 'transparent',
       },
       listItem: {
-        backgroundColor: '#0C364F',
+        backgroundColor: '#004f7c',
         marginBottom: '10px',
         borderRadius: '5px',
         color: '#A7A7A7',
         '&:hover': {
-          backgroundColor: '#082534',
+          backgroundColor: '#004063',
           color: '#333333',
         },
       },
       listItemIcon: {
-        color: '#A7A7A7',
+        color: '#FDFDFD',
         fontSize: '30px'
       },
       listItemText: {
-        color: '#A7A7A7',
+        color: '#FDFDFD',
         fontFamily: 'play-fair',
         fontWeight: 'bolder'
       },

@@ -16,7 +16,7 @@ function Cart({setActiveButton}) {
   
   useEffect(() => {
     async function fetchData() {
-      const songsArray =  userCartSongs.map((obj) => obj.uid);
+      const songsArray =  userCartSongs
       const newDocs = await fetchSongData(songsArray, userFavSongs, userCartSongs, true);
        setAllSongsArray((prevDocs) => [...prevDocs, ...newDocs]);
     }
@@ -65,12 +65,13 @@ function Cart({setActiveButton}) {
               const documentSnapshot = await getDoc(docRef);
               await handleCurrentUserSongs(
                 false,
-                item.id,
+                item.id + "_" + localStorage.getItem('selectedLanguage'),
                 "Download",
                 currentUser.uid,
                 documentSnapshot.data().day,
                 setUserDownloadSongs,
-                userDownloadSongs
+                userDownloadSongs,
+                localStorage.getItem('selectedLanguage')
               );
           }))
           setActiveButton("Downloads");
@@ -83,7 +84,7 @@ function Cart({setActiveButton}) {
               currentUser.uid,
               "",
               setUserCartSongs,
-              userCartSongs
+              userCartSongs,
             );
             const ordersCollectionRef = collection(db, 'orders');
             const orderData = {
@@ -99,8 +100,9 @@ function Cart({setActiveButton}) {
             } catch (error) {
               console.error('Error adding document: ', error);
             }
+  
         }))
-          
+        setUserCartSongs([])
           
         })
         .catch(error => {
@@ -132,9 +134,11 @@ function Cart({setActiveButton}) {
   return (
     <>
       {loader? (
+        <div style={{  height: '88%' , margin: '20px',borderRadius: "8px", backgroundColor: "#edeeef"}}>
         <WhiteCircularProgress />
+        </div>
       ) : (
-        <div style={{  height: '88%' , margin: '20px',borderRadius: "8px", backgroundColor: "#A7A7A7"}}>
+        <div style={{  height: '88%' , margin: '20px',borderRadius: "8px", backgroundColor: "#edeeef"}}>
     <SongsTable
         allSongsArray={allSongsArray}
         handleController={handleController}

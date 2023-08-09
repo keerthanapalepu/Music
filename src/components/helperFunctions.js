@@ -60,36 +60,38 @@ export const getCurrentUserSongs = async (uid, type) => {
     return songsData;
   }
   
-  export const fetchSongData = async (songsArray, userFavSongs = [], userCartSongs = [], preview = false ) => {
+  export const fetchSongData = async (songsArray, userFavSongs = [], userCartSongs = [], preview ) => {
     const language = localStorage.getItem('selectedLanguage');
     const newDocs = await Promise.all(songsArray.map(async (item) => {
-     const docRef = doc(db, 'songs', item);
+     const docRef = doc(db, 'songs', item.uid);
      const documentSnapshot = await getDoc(docRef);
      if (documentSnapshot.exists()) {
        const data = documentSnapshot.data();
-       let songUrl = preview? await getMediaUrl(`/music/${data.day}/${documentSnapshot.id}_preview_${language}.mp3`) : await getMediaUrl(`/music/${data.day}/${documentSnapshot.id}_${language}.mp3`);
+       let songUrl = preview? await getMediaUrl(`/music/${data.day}/${documentSnapshot.id}_preview_${language}.mp3`) : await getMediaUrl(`/music/${data.day}/${documentSnapshot.id}_${item.language}.mp3`);
          let Fav = false;
          if(userFavSongs.length > 0){
-            Fav = userFavSongs.some(obj => obj.uid === item);
+            Fav = userFavSongs.some(obj => obj.uid === item.uid);
          }
          let Cart = false;
          if(userCartSongs.length > 0){
-            Cart = userCartSongs.some(obj => obj.uid === item);
+            Cart = userCartSongs.some(obj => obj.uid === item.uid);
          }
          
-       return {hindiName: data.hindiName, teluguName : data.teluguName,  singer: data.artist, url: songUrl, duration: '3:14', fav: Fav, cart: Cart, id: item};
+       return {hindiName: data.hindiName, teluguName : data.teluguName,  singer: data.artist, url: songUrl, duration: '3:14', fav: Fav, cart: Cart, id: item.uid, language : item.language };
      }
     }))
     return newDocs;
   }
 
   
-  export const handleCurrentUserSongs = async (boolType, songId, type, uid, day, setFunc, array ) => {
+  export const handleCurrentUserSongs = async (boolType, songId, type, uid, day, setFunc, array, language ) => {
     const songRef = doc(db, `users/${uid}/${type}`, songId);
       if(boolType){
         try {
           await deleteDoc(songRef);
+          console.log(array);
           const filtered =  array.filter((obj) => obj.uid !== songId);
+          console.log(filtered);
           setFunc(() => [...filtered]);
         } catch (error) {
           console.error('Error deleting song:', error);
@@ -97,11 +99,16 @@ export const getCurrentUserSongs = async (uid, type) => {
       }
       else{
         try {
-          const updated = {
+          const updated = language ? ({
+            uid : songId.split('_')[0],
+            addedOn : serverTimestamp(),
+            day : day,
+            language : language
+          }) : ({
             uid : songId,
             addedOn : serverTimestamp(),
-            day : day
-          };
+            day : day,
+          });
           setFunc((prev) => [...prev, updated])
           await setDoc(songRef, updated);
         } catch (error) {

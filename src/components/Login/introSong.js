@@ -56,13 +56,16 @@ const IntroSongs = () => {
   const Languages = ['telugu', 'hindi'];
 
   return (
-    <div>
+    <div style={{padding: "10px" }}>
+    <h2 style={{  color: "white" ,paddingBotton : "0px" }}>{"Select Language"}</h2> 
       {loading ? (
         <CircularProgress style={{ color: 'white' }} />
       ) : (
         Languages.map((language, index) => (
           <div key={index} style={{ display: 'inline', paddingLeft: '30px' }}>
           <h2 style={{  color: "white" }}>{language === 'telugu' ? "శ్రీ సాయి సచ్చరిత్ర పాట రూపం లో" : "श्री साई सत्चरित्र,गीत रूप में"}</h2> 
+            {/* <div style={{  display : "flex" }}> */}
+            
             <Button
               variant="contained"
               onClick={() => {localStorage.setItem('selectedLanguage', language); setSongLanguage(language) }}
@@ -78,7 +81,9 @@ const IntroSongs = () => {
               <IconButton onClick={() => handlePlay(language === 'telugu' ? teluguUrl : hindiUrl, language)}>
                 <BsPlayCircleFill style={{ color: 'white' }} />
               </IconButton>
-            )}
+            )}&nbsp;&nbsp;
+            <h4 style={{  color: "white", display : "inline" }}>{language === 'telugu' ? "గీత పరిచయం" : "गीता परिचय"}</h4>
+            {/* </div> */}
           </div>
         ))
       )}

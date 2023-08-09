@@ -201,8 +201,8 @@ const Login = () => {
  return (
   <>
     <div className={classes.root}>
-      <h1 style={{ fontSize: "40px", marginRight: 'auto', position: "absolute", top: -15, left: 0, paddingLeft: "15px", zIndex: 1 }}>Sri Sai Satcharitra</h1>
-      <Card className={`${classes.card} mobileCard`}>
+    <Card className={`${classes.card} mobileCard`}>
+      <h1 style={{ fontSize: "48px", color: "white" }}>Sri Sai Satcharitra Geetamrutam</h1>
         <h1 style={{ fontSize: "48px", color: "white" }}>Login</h1>
         <GoogleSignInButton handleGoogleLogin={handleGoogleLogin} />
         <div>
@@ -257,7 +257,7 @@ const Login = () => {
       </Card>
 
       {/* IntroSongs component placed on the right side */}
-      <Card style={{ position: 'absolute', top: 350, right: 250 , backdropFilter: 'blur(10px)', background: 'transparent',
+      <Card style={{ position: 'absolute', top: 335, right: 250 , backdropFilter: 'blur(10px)', background: 'transparent',
         padding: "5px",
       textAlign: 'center'}} className={`mobileCard`} >
       <div >

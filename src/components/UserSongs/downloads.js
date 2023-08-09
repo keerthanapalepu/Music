@@ -11,8 +11,8 @@ function Download() {
   
   useEffect(() => {
     async function fetchData() {
-      const songsArray =  userDownloadSongs.map((obj) => obj.uid);
-      const newDocs = await fetchSongData(songsArray, [], []);
+      const songsArray =  userDownloadSongs
+      const newDocs = await fetchSongData(songsArray, [], [], false);
        setAllSongsArray((prevDocs) => [...prevDocs, ...newDocs]);
     }
     fetchData();

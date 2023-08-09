@@ -6,25 +6,26 @@ import { useUserSongs } from "../../context/songsContext";
 import DialogBox from "../HelperWidget/DialogBox";
 
 const SongTableRow = ({ handleDownload, type, song, index, currentSong, handlePlay, handlePause, handleController }) => {
+  console.log(song)
+  const language = localStorage.getItem('selectedLanguage');
   const { userDownloadSongs } = useUserSongs();
   const [open, setOpen] = useState(false);
   const checkInDownloads = (cart, index, id, type) => {
-    const foundObject = userDownloadSongs.find((obj) => obj.uid === id);
+    const foundObject = userDownloadSongs.find((obj) => obj.uid === id && obj.language === language);
     if (foundObject) {
       setOpen(true);
     } else {
       handleController(cart, index, id, type);
     }
   }
-  const language = localStorage.getItem('selectedLanguage');
   return (
     <>
-      <TableRow key={song.name} hover style={{ height: '50px' }}>
+      <TableRow key={index + 1} hover style={{ height: '50px' }}>
       <TableCell>{index + 1}</TableCell>
-      <TableCell>{language === "telugu"? song.teluguName : song.hindiName}</TableCell>
+      <TableCell>{song.language? (song.language === "telugu"? song.teluguName : song.hindiName) : (language === "telugu"? song.teluguName : song.hindiName)}</TableCell>
       <TableCell>{song.singer}</TableCell>
       {/* <TableCell>{song.duration}</TableCell> */}
-      <TableCell>
+      {type !== "Download" && <TableCell>
         {currentSong === index ? (
           <IconButton onClick={handlePause}>
             <BsPauseCircleFill />
@@ -34,9 +35,10 @@ const SongTableRow = ({ handleDownload, type, song, index, currentSong, handlePl
             <BsPlayCircleFill />
           </IconButton>
         )}
-      </TableCell>
+      </TableCell>}
      {type !== "Download" && <TableCell>
-        {song.fav ? (
+        {song.fav? (
+         
           <IconButton onClick={() => handleController(song.fav, index, song.id, "Favourite")}>
             <AiFillHeart />
           </IconButton>
@@ -48,17 +50,17 @@ const SongTableRow = ({ handleDownload, type, song, index, currentSong, handlePl
       </TableCell>}
       {type !== "Download" && <TableCell>
         {song.cart ? (
-          <Button variant="contained" style={{ backgroundColor: "#A5A492" }} onClick={() => handleController(song.cart, index, song.id, "Cart")}>
+          <Button variant="contained" style={{ backgroundColor: "#2b2b2b" }} onClick={() => handleController(song.cart, index, song.id, "Cart")}>
             REMOVE
           </Button>
         ) : (
-          <Button variant="contained" style={{ backgroundColor: "#A5A492" }} onClick={() => checkInDownloads(song.cart, index, song.id, "Cart")}>
+          <Button variant="contained" style={{ backgroundColor: "#2b2b2b" }} onClick={() => checkInDownloads(song.cart, index, song.id, "Cart")}>
             ADD
           </Button>
         )}
       </TableCell>}
       {type === "Download" && <TableCell>
-        <IconButton onClick={() => handleDownload(song.url, language === "telugu"? song.teluguName : song.hindiName)}>
+        <IconButton onClick={() => handleDownload(song.url, song.language === "telugu"? song.teluguName : song.hindiName)}>
           <AiOutlineDownload />
         </IconButton>
     </TableCell>}

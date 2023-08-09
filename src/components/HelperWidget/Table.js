@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell , Typography} from '@mui/material';
 import SongTableRow from './songRow';
+import {HiShoppingCart} from "react-icons/hi";
 
 const textStyles = {
   display: 'flex',
@@ -83,7 +84,7 @@ function SongsTable({ allSongsArray, handleController, type}) {
       };
       
     return (
-    <div style={{ overflowY: 'auto', height: '88%', margin: '20px', borderRadius: "8px", backgroundColor: "#A7A7A7" }}>
+    <div style={{ overflowY: 'auto', height: '88%', margin: '20px', borderRadius: "8px", backgroundColor: "#edeeef" }}>
       <style>
         {`
         ::-webkit-scrollbar {
@@ -101,11 +102,11 @@ function SongsTable({ allSongsArray, handleController, type}) {
           <TableRow>
             <TableCell>Serial No.</TableCell>
             <TableCell>Song Name</TableCell>
-            <TableCell>Artist</TableCell>
+            <TableCell>Singer</TableCell>
             {/* <TableCell>Duration</TableCell> */}
-            <TableCell>Play</TableCell>
+            {type !== "Download"  && <TableCell>Play</TableCell>}
             {type !== "Download" && <TableCell>Favourite</TableCell>}
-            {type !== "Download" &&<TableCell>Cart</TableCell>}
+            {type !== "Download" &&<TableCell><HiShoppingCart style={{ fontSize: '1.3rem' }}/></TableCell>}
             {type === "Download" &&<TableCell>Download</TableCell>}
           </TableRow>
         </TableHead>
