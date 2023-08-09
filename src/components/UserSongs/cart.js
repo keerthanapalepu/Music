@@ -146,7 +146,7 @@ function Cart({setActiveButton}) {
       />
      <div style={{display:'flex', justifyContent: "space-around", alignItems: "center", padding: "20px"}}>
      <Typography variant="h6">Total Amount: {allSongsArray.length * 50} /- </Typography>
-      <Button variant="contained" style={{backgroundColor: "#A5A492"}} onClick={handlePayment} color="primary">
+      <Button variant="contained" style={{backgroundColor: "#148024"}} onClick={handlePayment} color="primary">
         Checkout
       </Button>
      </div>

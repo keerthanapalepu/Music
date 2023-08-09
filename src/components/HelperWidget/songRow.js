@@ -22,7 +22,17 @@ const SongTableRow = ({ handleDownload, type, song, index, currentSong, handlePl
     <>
       <TableRow key={index + 1} hover style={{ height: '50px' }}>
       <TableCell>{index + 1}</TableCell>
-      <TableCell>{song.language? (song.language === "telugu"? song.teluguName : song.hindiName) : (language === "telugu"? song.teluguName : song.hindiName)}</TableCell>
+      <TableCell>
+        <strong style={{ fontSize: 'larger' }}>
+          {song.language
+            ? song.language === "telugu"
+              ? song.teluguName
+              : song.hindiName
+            : language === "telugu"
+            ? song.teluguName
+            : song.hindiName}
+        </strong>
+      </TableCell>
       <TableCell>{song.singer}</TableCell>
       {/* <TableCell>{song.duration}</TableCell> */}
       {type !== "Download" && <TableCell>

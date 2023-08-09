@@ -257,7 +257,7 @@ const Login = () => {
       </Card>
 
       {/* IntroSongs component placed on the right side */}
-      <Card style={{ position: 'absolute', top: 335, right: 250 , backdropFilter: 'blur(10px)', background: 'transparent',
+      <Card style={{ position: 'absolute', top: 280, right: 250 , backdropFilter: 'blur(10px)', background: 'transparent',
         padding: "5px",
       textAlign: 'center'}} className={`mobileCard`} >
       <div >
