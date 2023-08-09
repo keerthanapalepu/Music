@@ -55,7 +55,7 @@ const SongTableRow = ({ handleDownload, type, song, index, currentSong, handlePl
           </Button>
         ) : (
           <Button variant="contained" style={{ backgroundColor: "#2b2b2b" }} onClick={() => checkInDownloads(song.cart, index, song.id, "Cart")}>
-            ADD
+            ADD/BUY
           </Button>
         )}
       </TableCell>}

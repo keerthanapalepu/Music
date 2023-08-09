@@ -104,7 +104,7 @@ function SongsTable({ allSongsArray, handleController, type}) {
             <TableCell>Song Name</TableCell>
             <TableCell>Singer</TableCell>
             {/* <TableCell>Duration</TableCell> */}
-            {type !== "Download"  && <TableCell>Play</TableCell>}
+            {type !== "Download"  && <TableCell>Preview</TableCell>}
             {type !== "Download" && <TableCell>Favourite</TableCell>}
             {type !== "Download" &&<TableCell><HiShoppingCart style={{ fontSize: '1.3rem' }}/></TableCell>}
             {type === "Download" &&<TableCell>Download</TableCell>}
