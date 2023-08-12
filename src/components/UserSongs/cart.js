@@ -50,8 +50,8 @@ function Cart({setActiveButton}) {
 			key: "rzp_test_ejCrGqnkEeie69",
 			amount: data.amount,
 			currency: data.currency,
-			name: "Buy Songs",
-			description: "Test Transaction",
+			name: "Aasmani Songs",
+			description: "Transaction",
 			order_id: data.id,
 			handler: async (response) => {
         const verifyPayment = httpsCallable(functions, 'paymentVerification');

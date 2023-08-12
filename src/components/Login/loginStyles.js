@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     },
     card: {
       background: 'transparent', 
-      padding: theme.spacing(2),
+      padding: theme.spacing(5),
       textAlign: 'center',
       backdropFilter: 'blur(10px)',
       width: "500px",

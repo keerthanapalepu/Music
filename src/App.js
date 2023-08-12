@@ -7,7 +7,10 @@ import { AuthProvider } from "./context/authContext";
 import {UserSongsProvider} from "./context/songsContext";
 import HomePage from "./components/Home/home.js";
 import Login from "./components/Login/login.js";
-
+import AboutPage from "./components/CompanyInfo/aboutus";
+import PrivacyPolicyPage from "./components/CompanyInfo/privacyPolicy";
+import RefundandReturn from "./components/CompanyInfo/refund";
+import Terms from "./components/CompanyInfo/termsandcondition";
 function App() {
   return (<>
     <Router >
@@ -22,6 +25,10 @@ function App() {
                 path="/test"
                 element={<PrivateRoute component=<Test /> />}
               /> */}
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/refund" element={<RefundandReturn />} />
+              <Route path="/privacy_policy" element={<PrivacyPolicyPage />} />
+              <Route path="/about" element={<AboutPage />} />
               <Route path="/login" element={<Login />} />
             </Routes>
         </UserSongsProvider>

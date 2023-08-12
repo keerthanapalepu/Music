@@ -25,6 +25,7 @@ import ProfileDialog from "./dialog";
 import {formatFirebaseErrorCode} from "./loginHelper";
 import {createDoc} from "../helperFunctions";
 import IntroSongs from './introSong';
+import { Divider } from '@mui/material';
 const Login = () => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -202,11 +203,13 @@ const Login = () => {
   <>
     <div className={classes.root}>
     <Card className={`${classes.card} mobileCard`}>
-      <h1 style={{ fontSize: "48px", color: "white" }}>Sri Sai Satcharitra Geetamrutam</h1>
-        <h1 style={{ fontSize: "48px", color: "white" }}>Login</h1>
+      <h1 style={{ fontSize: "48px", color: "white", fontWeight: "bolder" }}>Sri Sai Satcharitra Geetamrutam</h1>
+      <br/>
+        <h1 style={{ fontSize: "48px", color: "white",  fontWeight: "bolder"  }}>Login</h1>
         <GoogleSignInButton handleGoogleLogin={handleGoogleLogin} />
+        <br/>
         <div>
-          <h1 style={{ color: "FFFfff" }}>Login with Phone</h1>
+          <h1 style={{ color: "white",  fontWeight: "bolder"  }}>Login with Phone</h1>
           <div>
             <Box className={classes.container}>
               <div className="container">
@@ -254,6 +257,11 @@ const Login = () => {
             </Box>
           </div>
         </div>
+        <p style={{color: "white"}}>By signing into our website you are accepting <br/>
+        <a  style={{color: "white", textDecoration: "underline"}} href="/terms" target="_blank" rel="noopener noreferrer">Terms & Conditions  </a>&nbsp;&nbsp;
+        <a   style={{color: "white",  textDecoration: "underline"}}href="/refund" target="_blank" rel="noopener noreferrer"> Return & Refund Policy </a>&nbsp;&nbsp;
+        <a   style={{color: "white",  textDecoration: "underline"}}href="/privacy_policy" target="_blank" rel="noopener noreferrer"> Privacy Policy</a>
+           </p>
       </Card>
 
       {/* IntroSongs component placed on the right side */}
@@ -276,9 +284,45 @@ const Login = () => {
         handleSubmit={handleSubmit}
         validateEmail={validateEmail}
       />
-      <h3 style={{ marginLeft: 'auto', position: "absolute", bottom: 0, right: 0, paddingRight: "10px" }}>© By Asmani Music</h3>
+      {/* <h3 style={{ marginLeft: 'auto', position: "absolute", bottom: 0, right: 0, paddingRight: "10px" }}>© By Aasmani Music</h3> */}
+      
     </div>
-    <div id="recaptcha-container"></div>
+    <div  >
+    <footer >
+      <nav>
+          <ul>
+              <div style={{marginLeft : "40px",paddingTop: "50px", display : "flex", justifyContent: "", alignItems: "flex-end", fontWeight: "bolder"}}>
+              <div >{""}
+              <li><a href="/about" target="_blank" rel="noopener noreferrer">About Us</a></li>
+              <li><a href="/terms" target="_blank" rel="noopener noreferrer">Terms & Conditions</a></li>
+              </div>
+              <div style={{marginLeft : "55px"}} />
+              <div> {""}
+              <li><a href="/refund" target="_blank" rel="noopener noreferrer">Return & Refund Policy</a></li>
+              <li><a href="/privacy_policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+              </div>
+              <div style={{marginLeft : "55px"}} />
+              <div> {"Contact Us"}
+              <li style={{fontWeight: "normal"}}><a href="mailto:divineproject@aasmanimusic.com">divineproject@aasmanimusic.com</a></li>
+              <li style={{fontWeight: "normal"}}>2-2-1105/4/A/F, tilak nagar, Indira Nagar, Hyderabad, Hyderabad,
+Telangana, 500044</li>
+              </div>
+              </div>
+          </ul>
+      </nav>
+
+      <span style={{margin : "60px"}}>
+      <Divider />
+      </span>
+      
+      <div  style={{marginLeft : "60px",paddingTop: "5px"}}>
+      <h6>© By Aasmani Music </h6>
+      </div>
+  </footer>
+    </div>
+   
+    
+    <div style={{backgroundColor: "black" }} id="recaptcha-container"></div>
   </>
 );
 

@@ -71,7 +71,7 @@ function HomePage() {
           <Grid item xs={isMobileDevice ? 12 : 10} md={10} className={classes.gridItem} style={{ backgroundColor: 'white' }}>
             <Card className={classes.card}>
             <div style={{ display: 'flex', maxHeight: "45px" , justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1 style={{ padding : "30px", color : "black"  }}>{`${language === "telugu"? "Telugu" : "Hindi"} Sai Satcharitra`}</h1>
+                <h1 style={{ padding : "30px", color : "black"  }}>{`Sri Sai Satcharitra Geetamrutam in ${language === "telugu"? "Telugu" : "Hindi"}`}</h1>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Button
                   className={classes.iconButton}
