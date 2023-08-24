@@ -1,6 +1,6 @@
 # Music App React Project
 
-This Music App React project is a platform designed to connect users with student composers, providing them with an opportunity to buy and support their original songs. The app offers a user-friendly interface for browsing, previewing, and purchasing music. Additionally, users can create wishlists and add songs to their cart for easy checkout. you can find the ddeployed version here https://music-20588.web.app/
+This Music App React project is a platform designed to connect users with student composers, providing them with an opportunity to buy and support their original songs. The app offers a user-friendly interface for browsing, previewing, and purchasing music. Additionally, users can create wishlists and add songs to their cart for easy checkout.
 
 ## Table of Contents
 
