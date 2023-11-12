@@ -211,11 +211,11 @@ function Favourite() {
                 </TableCell>
                 <TableCell>
                   {song.cart? (
-                    <Button variant="contained" style={{backgroundColor: "#A5A492"}} onClick={() => handleCart(song.cart, index, song.id)}>
+                    <Button variant="contained" style={{backgroundColor: ""}} onClick={() => handleCart(song.cart, index, song.id)}>
                        REMOVE
                     </Button>
                   ) : (
-                    <Button variant="contained"style={{backgroundColor: "#A5A492"}} onClick={() => handleCart(song.cart, index, song.id)}>
+                    <Button variant="contained"style={{backgroundColor: ""}} onClick={() => handleCart(song.cart, index, song.id)}>
                       ADD
                     </Button>
                   )}

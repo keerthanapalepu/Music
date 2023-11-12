@@ -10,6 +10,24 @@ import {
   getDownloadURL,
   ref,
 } from "firebase/storage";
+
+const ElegantButton = (props) => (
+  <Button
+    variant="contained"
+    sx={{
+      backgroundColor: '#4CAF50', 
+      color: 'white',
+      '&:hover': {
+        backgroundColor: '#45a049',
+      },
+      padding: '8px 15px', 
+    }}
+    onClick={props.handlePayment}
+  >
+    Checkout
+  </Button>
+);
+
 function Cart() {
   const [currentSong, setCurrentSong] = useState(null);
   const [audio, setAudio] = useState(null);
@@ -129,7 +147,44 @@ function Cart() {
 			description: "Test Transaction",
 			order_id: data.id,
 			handler: async (response) => {
-        const verifyPayment = httpsCallable(functions, 'paymentVerification');
+        let config = {
+          method: 'POST',
+          url: 'https://music-app-4oy6viaxmq-el.a.run.app/paymentVerification',
+          headers: {
+            'authorization': `Bearer ${currentUser.accessToken}`
+          },
+          data : response
+        };
+        axios.request(config)
+        .then(async (response) => {
+          console.log(response.data);
+          await Promise.all(allSongsArray.map(async (item) => {
+            const CartRef = doc(db, `users/${currentUser.uid}/Cart`, item.id);
+            const DownloadRef = doc(db, `users/${currentUser.uid}/Download`, item.id);
+              try {
+                await deleteDoc(CartRef);
+              } catch (error) {
+                console.error('Error deleting Cart:', error);
+              }
+              try {
+                const docRef = doc(db, 'songs', item.id);
+                const documentSnapshot = await getDoc(docRef);
+                const updatedFav = {
+                  uid : item.id,
+                  addedOn : serverTimestamp(),
+                  day : documentSnapshot.data().day
+                };
+                
+                await setDoc(DownloadRef, updatedFav);
+              } catch (error) {
+                console.error('Error updating Cart:', error);
+              }
+          }))
+          setAllSongsArray([])
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          const verifyPayment = httpsCallable(functions, 'paymentVerification');
         verifyPayment(response)
         .then(async (response) => {
           console.log(response.data);
@@ -160,6 +215,8 @@ function Cart() {
         .catch(error => {
           console.error('Error:', error);
         });
+        });
+        
 			},
 			theme: {
 				color: "#3399cc",
@@ -170,14 +227,31 @@ function Cart() {
 	};
 
 	const handlePayment = async () => {
-    const createOrder = httpsCallable(functions, 'createOrder');
-    createOrder({amount : allSongsArray.length * 50})
+    let config = {
+      method: 'POST',
+      url: 'https://music-app-4oy6viaxmq-el.a.run.app/createOrder',
+      headers: {
+        'authorization': `Bearer ${currentUser.accessToken}`
+      },
+      data : {amount : allSongsArray.length * 50}
+    };
+    axios.request(config)
     .then((response) => {
+      console.log(JSON.stringify(response.data));
       initPayment(response.data.data);
     })
-    .catch(error => {
-      console.error('Error:', error);
-    });
+    .catch((error) => {
+      console.log(error);
+      const createOrder = httpsCallable(functions, 'createOrder');
+      createOrder({amount : allSongsArray.length * 50})
+      .then((response) => {
+        initPayment(response.data.data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+      });
+    
 	};
 
   return (
@@ -226,11 +300,11 @@ function Cart() {
                 </TableCell>
                 <TableCell>
                   {song.cart? (
-                    <Button variant="contained" style={{backgroundColor: "#A5A492"}} onClick={() => handleCart(song.cart, index, song.id)}>
+                    <Button variant="contained" style={{backgroundColor: ""}} onClick={() => handleCart(song.cart, index, song.id)}>
                        REMOVE
                     </Button>
                   ) : (
-                    <Button variant="contained" style={{backgroundColor: "#A5A492"}} onClick={() => handleCart(song.cart, index, song.id)}>
+                    <Button variant="contained" style={{backgroundColor: ""}} onClick={() => handleCart(song.cart, index, song.id)}>
                       ADD
                     </Button>
                   )}
@@ -242,9 +316,8 @@ function Cart() {
       </Table>
      <div style={{display:'flex', justifyContent: "space-around", alignItems: "center", padding: "20px"}}>
      <Typography variant="h6">Total Amount: {allSongsArray.length * 50}</Typography>
-      <Button variant="contained" style={{backgroundColor: "#A5A492"}} onClick={handlePayment} color="primary">
-        Checkout
-      </Button>
+     <ElegantButton handlePayment={handlePayment} />
+
      </div>
     </div>
   );

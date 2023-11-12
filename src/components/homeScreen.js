@@ -88,7 +88,7 @@ const HomeScreen = () => {
 
   const getSongs = async () => {
     const collectionRef = collection(db, 'weeklyAlbum');
-    let firestoreQuery = query(collectionRef, orderBy('createdOn'), limit(8));
+    let firestoreQuery = query(collectionRef, orderBy('addedOn'), limit(8));
 
     if (lastAddedOn) {
       firestoreQuery = query(firestoreQuery, startAfter(lastAddedOn));
@@ -98,7 +98,7 @@ const HomeScreen = () => {
       const querySnapshot = await getDocs(firestoreQuery);
       const newDocs = [];
 
-      await Promise.all(querySnapshot.docs.map(async(doc) => {
+      await Promise.all(querySnapshot.docs.map(async(doc) => {  
         var imageUrl = "";
           const storageRef = ref(storage, `/music/${doc.data().type}/${doc.data().type}.jpg`);
 
@@ -125,8 +125,6 @@ const HomeScreen = () => {
     } catch (error) {
       console.log('Error getting documents:', error);
     }
-
-    
   }
   
   const getFavSongs = async () => {
@@ -285,7 +283,7 @@ const HomeScreen = () => {
         </IconButton>
       </Grid>
 
-      <Grid container item style={{ height: '55%', backgroundColor: '#6A695E', margin: '0 10px 0' }}>
+      <Grid container item style={{ height: '60%', backgroundColor: '#CCCCCC', margin: '0 10px 0' }}>
          <SongsList songs={allSongsArray} setAllSongsArray={setAllSongsArray} day={weekSongsArray[selectedCard]?.type}/>
       </Grid>
 

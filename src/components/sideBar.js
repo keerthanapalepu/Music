@@ -25,11 +25,11 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   listItemIcon: {
-    color: '#A7A7A7',
+    color: 'white',
     fontSize: '30px'
   },
   listItemText: {
-    color: '#A7A7A7',
+    color: 'white',
     fontFamily: 'play-fair',
     fontWeight: 'bolder'
   },
